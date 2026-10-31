@@ -1,0 +1,371 @@
+{
+  "nav": {
+    "home": "Home",
+    "airport": "Airport Transfers",
+    "cruise": "Cruise Port",
+    "sants": "Sants Station",
+    "cityTransfers": "City Transfers",
+    "tours": "City Tours",
+    "famousPlaces": "Famous Places",
+    "fleet": "Our Fleet",
+    "manageBooking": "Manage Booking",
+    "customQuote": "Custom Quote",
+    "about": "About Us",
+    "contact": "Contact",
+    "bookNow": "Book Now",
+    "phone": "+34 930 000 000"
+  },
+  "hero": {
+    "badge": "Premium Private Chauffeur & Transfers in Barcelona",
+    "title": "Your Journey Starts Here Always on Time",
+    "titleLine1": "Your Journey Starts Here",
+    "titleLine2": "Always on Time",
+    "subtitle": "Airport transfers, taxi service and private transportation in Barcelona.",
+    "bookTransfer": "Book Your Transfer",
+    "exploreBarcelona": "Explore Barcelona",
+    "features": {
+      "fixedPrice": "Guaranteed Fixed Pricing",
+      "flightTracking": "Complimentary Flight Monitoring",
+      "waiting": "Up to 60 Mins Free Waiting",
+      "comfort": "Premium Fleet & Chauffeurs"
+    },
+    "serviceBar": {
+      "airport": "Airport Transfers",
+      "airportSub": "BCN Airport",
+      "taxi": "Taxi Service",
+      "taxiSub": "City & Surroundings",
+      "cruise": "Cruise Port",
+      "cruiseSub": "Terminal Transfers",
+      "private": "Private Transfers",
+      "privateSub": "Hotels • Business • Events"
+    }
+  },
+  "widget": {
+    "title": "Calculate Fare & Book Instantly",
+    "pickup": "Pickup Location / Airport / Hotel",
+    "pickupPlaceholder": "e.g. Barcelona El Prat Airport (BCN) Terminal 1",
+    "destination": "Destination / Hotel / Address",
+    "destinationPlaceholder": "e.g. Hotel Arts, Passeig de Gràcia, or Cruise Port",
+    "date": "Pickup Date",
+    "time": "Pickup Time",
+    "passengers": "Passengers",
+    "luggage": "Luggage",
+    "serviceType": "Service Type",
+    "types": {
+      "airport": "Airport Transfer",
+      "cruise": "Cruise Port Transfer",
+      "sants": "Sants Station Transfer",
+      "city": "City Transfer",
+      "tour": "Private City Tour",
+      "group": "Group Transportation"
+    },
+    "continue": "Calculate Fare & Choose Vehicle",
+    "pricingNotice": "Official metropolitan regulated fares and transparent fixed rates."
+  },
+  "services": {
+    "title": "Exclusive Transfer Services",
+    "subtitle": "Tailored executive private transport for leisure and business travellers across Catalonia.",
+    "airport": {
+      "title": "Barcelona Airport (BCN) Transfers",
+      "desc": "Seamless meet & greet at Terminal 1 or 2 with 60 minutes free waiting time and direct flight tracking.",
+      "action": "Book Airport Transfer"
+    },
+    "cruise": {
+      "title": "Barcelona Cruise Port Transfers",
+      "desc": "Direct door-to-ship transfers to all Moll Adossat piers (Terminals A, B, C, D, E, and World Trade Center).",
+      "action": "Book Port Transfer"
+    },
+    "sants": {
+      "title": "Barcelona Sants Station Transfers",
+      "desc": "Punctual high-speed AVE/Ouigo train station pickups with direct meet & greet at the main arrival hall.",
+      "action": "Book Train Station Transfer"
+    },
+    "tours": {
+      "title": "Private Sightseeing Tours",
+      "desc": "Explore Sagrada Família, Park Güell, and Montserrat at your pace with a dedicated chauffeur (€65/hr).",
+      "action": "Explore City Tours"
+    },
+    "executive": {
+      "title": "Executive & VIP Chauffeur",
+      "desc": "Premium Mercedes-Benz E-Class & S-Class vehicles for corporate roadshows, summits, and VIP travel.",
+      "action": "Book Executive Ride"
+    },
+    "group": {
+      "title": "Luxury Minivans & Group Transfers",
+      "desc": "Mercedes V-Class and spacious passenger vans for families, luggage, and executive delegations.",
+      "action": "Book Group Transfer"
+    },
+    "company": {
+      "title": "Trip for Companies",
+      "desc": "Dedicated corporate transport solutions for business meetings, events, and executive roadshows. Billed at a fixed hourly rate.",
+      "action": "Book Company Trip"
+    }
+  },
+  "whyUs": {
+    "title": "Why Choose Barcelona Taxi Transfer",
+    "subtitle": "Uncompromising safety, punctuality, and comfort for discerning visitors.",
+    "item1Title": "Transparent Fixed Fares",
+    "item1Desc": "No hidden toll charges, no night surcharges, and no surprise surge rates. What you see is what you pay.",
+    "item2Title": "Professional VTC & Taxi Chauffeurs",
+    "item2Desc": "English-speaking, licensed, courteous professionals with deep knowledge of Barcelona's routes.",
+    "item3Title": "Generous Free Waiting Policy",
+    "item3Desc": "Enjoy 60 minutes complimentary waiting at BCN Airport, 30 minutes at Cruise Port, and 15 minutes in the city.",
+    "item4Title": "Advanced Booking & Live Support",
+    "item4Desc": "We track your flight arrival in real-time and provide 24/7 customer support via phone and WhatsApp."
+  },
+  "about": {
+    "badge": "About Barcelona Taxi Transfer",
+    "title": "Barcelona's Most Trusted Private Transfer Service",
+    "desc1": "Founded in the heart of Barcelona, we are a licensed private vehicle transportation company (VTC) offering premium transfers across the entire Catalan metropolitan region.",
+    "desc2": "Our fleet of luxury Mercedes-Benz vehicles, combined with a team of professional, multilingual chauffeurs, ensures an unparalleled travel experience tailored to the needs of every passenger.",
+    "bookBtn": "Book Your Transfer Now",
+    "quoteBtn": "Request a Custom Quote",
+    "stats": {
+      "drivers": "Dedicated Drivers",
+      "network": "Partner Network",
+      "rating": "Average Rating",
+      "support": "Support Available"
+    }
+  },
+  "cta": {
+    "badge": "Ready for a Smooth Journey?",
+    "title": "Experience Barcelona with",
+    "titleHighlight": "Pure Comfort & Luxury",
+    "subtitle": "Book your private airport, cruise port, or city transfer now with transparent fixed fares, verified VTC chauffeurs, and complimentary flight monitoring.",
+    "bookOnline": "Book Your Transfer Online",
+    "customQuote": "Request Custom Quote",
+    "feature1": "No hidden costs or night fees",
+    "feature2": "Free cancellation up to 24h before",
+    "feature3": "24/7 Telephone & WhatsApp Dispatch"
+  },
+  "famousPlacesPreview": {
+    "badge": "Top Barcelona Landmarks",
+    "title": "Discover the Famous Places of Barcelona",
+    "subtitle": "Visit the world-renowned architectural wonders and scenic sights with our private chauffeur service.",
+    "exploreAll": "View All 10 Attractions",
+    "bookRide": "Book a Ride to This Place"
+  },
+  "fleetPreview": {
+    "badge": "Our Luxury Vehicles",
+    "title": "A Fleet Suited For Every Journey",
+    "subtitle": "Meticulously maintained, air-conditioned, and fully licensed premium vehicles.",
+    "viewAll": "Explore Complete Fleet",
+    "capacity": "Capacity",
+    "suitcases": "Luggage",
+    "bookVehicle": "Select Vehicle"
+  },
+  "booking": {
+    "title": "Book Your Barcelona Transfer",
+    "step1": "1. Journey Details",
+    "step2": "2. Passenger Info",
+    "step3": "3. Vehicle Selection",
+    "step4": "4. Fare Review",
+    "step5": "5. Confirmation & Payment",
+    "pickup": "Pickup Location",
+    "destination": "Destination",
+    "dateTime": "Date & Time",
+    "flightNumber": "Flight Number (e.g. VY6102 or BA0478)",
+    "flightHelp": "We monitor flight status for automated landing adjustments.",
+    "cruiseShip": "Cruise Ship Name or Pier",
+    "trainNumber": "Train Number (e.g. AVE 03102)",
+    "specialRequests": "Special Requests / Child Seats / Notes",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number (with country code)",
+    "passengersCount": "Number of Passengers",
+    "luggageCount": "Standard Luggage / Suitcases",
+    "cabinLuggageCount": "Cabin Size Luggage",
+    "childSeats": "Child Safety Seats",
+    "selectVehicle": "Select Vehicle Category",
+    "fareSummary": "Fare Breakdown",
+    "basePrice": "Base Fare",
+    "vehicleSurcharge": "Vehicle Category Surcharge",
+    "total": "Total Fare (EUR)",
+    "waitingPolicy": "Applicable Free Waiting Time",
+    "confirmAndPay": "Proceed to Payment",
+    "confirmBooking": "Submit Booking Request",
+    "pendingNotice": "Cruise port and Sants station bookings are subject to dispatcher verification. You will receive an instant review link.",
+    "agreeTerms": "I agree to the Terms of Service and Cancellation Policy.",
+    "babySeats": "Baby Safety Seats (€9.00 each)",
+    "babyBoosters": "Baby Boosters (€4.50 each)",
+    "distance": "Estimated Distance",
+    "duration": "Estimated Duration",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "nextStep": "Next Step",
+    "prevStep": "Back",
+    "calculating": "Calculating fare...",
+    "depositNote": "A 20% advance deposit is collected online. Remaining balance payable to driver.",
+    "depositAmount": "Deposit (20% Online)",
+    "remainingBalance": "Remaining Balance (to Driver)",
+    "payDeposit": "Pay Deposit & Confirm Booking",
+    "cardName": "Cardholder Name",
+    "cardNumber": "Card Number",
+    "cardExpiry": "Expiry (MM/YY)",
+    "cardCvc": "CVC",
+    "processing": "Processing...",
+    "bookingConfirmed": "Booking Confirmed!",
+    "bookingRef": "Your booking reference is:",
+    "viewBooking": "View Your Booking",
+    "manageBooking": "Manage Booking"
+  },
+  "manage": {
+    "title": "Manage My Booking",
+    "subtitle": "Access your reservation, check driver status, review invoices, or request modifications.",
+    "tokenInput": "Enter Booking Reference",
+    "emailOrPhone": "Email Address or Phone Number",
+    "lookup": "Retrieve Booking",
+    "lookupDesc": "Enter your booking reference and email or phone to view your reservation.",
+    "status": "Booking Status",
+    "payment": "Payment Status",
+    "assignedDriver": "Assigned Chauffeur",
+    "driverVehicle": "Vehicle & Plate",
+    "downloadReceipt": "Download PDF Invoice / Receipt",
+    "cancelBooking": "Cancel Booking",
+    "revisedFareNotice": "The fare for this transfer has been revised by our dispatch team. Please review and accept before completing payment.",
+    "acceptRevisedFare": "Accept Revised Fare & Pay",
+    "rejectRevision": "Decline & Cancel",
+    "noBooking": "No booking found",
+    "notFound": "Booking Not Found",
+    "notFoundDesc": "We could not find a booking matching your reference and contact details. Please check your confirmation email.",
+    "driverPending": "Driver Not Yet Assigned",
+    "driverPendingDesc": "Your driver will be assigned before your pickup. You will receive an update by email.",
+    "payRemaining": "Pay Remaining Balance",
+    "paidFull": "Fully Paid Online",
+    "totalFare": "Total Fare",
+    "advancePaid": "Advance Paid",
+    "remainingBalance": "Remaining Balance",
+    "paymentMethod": "Payment Method",
+    "copyRef": "Copy Reference",
+    "copied": "Copied!",
+    "trackYourRide": "Track Your Ride",
+    "pickupInfo": "Pickup Details",
+    "dropoffInfo": "Drop-off Details",
+    "passengers": "Passengers",
+    "luggage": "Luggage",
+    "vehicleClass": "Vehicle Class",
+    "confirmCancel": "Are you sure you want to cancel this booking?",
+    "cancelSuccess": "Your booking has been cancelled.",
+    "paySuccess": "Payment completed! Your booking is now fully paid.",
+    "secureAccess": "Secure Guest Access Link",
+    "secureAccessDesc": "Bookmark this link to access your reservation at any time without logging in:"
+  },
+  "places": {
+    "title": "Famous Places in Barcelona",
+    "subtitle": "Discover the most iconic architectural gems, historic quarters, and Mediterranean beaches in Barcelona.",
+    "allCategories": "All Categories",
+    "searchPlaceholder": "Search attractions (e.g. Sagrada Família, Park Güell)...",
+    "explorePlace": "Explore Landmark",
+    "bookTransfer": "Book Ride Here",
+    "coordinates": "Coordinates",
+    "duration": "Recommended Visit Time"
+  },
+  "fleet": {
+    "title": "Our Vehicle Fleet",
+    "subtitle": "Explore our wide range of luxury sedans, electric executive cars, and high-capacity VIP vans.",
+    "models": "Example Models",
+    "maxPassengers": "Max Passengers",
+    "maxLuggage": "Luggage Capacity",
+    "features": "Included Amenities",
+    "select": "Book This Category"
+  },
+  "quote": {
+    "title": "Request a Custom Quote",
+    "subtitle": "Traveling outside the Barcelona metropolitan area, requiring multi-day journeys, or organizing large corporate events? Contact our bespoke logistics team.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Journey Details & Requirements",
+    "submit": "Submit Quote Request",
+    "success": "Your quote request has been received. Our team will review the itinerary and send a customized proposal within 2 hours."
+  },
+  "contact": {
+    "title": "Contact Barcelona Taxi Transfer",
+    "subtitle": "Our multilingual customer care team is available 24 hours a day, 7 days a week.",
+    "name": "Your Name",
+    "email": "Your Email",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "message": "Your Message",
+    "send": "Send Message",
+    "success": "Thank you. Your message has been sent successfully.",
+    "address": "Address",
+    "hours": "Opening Hours",
+    "hoursValue": "24 hours a day, 7 days a week",
+    "whatsapp": "WhatsApp",
+    "emailLabel": "Email"
+  },
+  "footer": {
+    "tagline": "Barcelona's premier private transfer & luxury chauffeur service.",
+    "quickLinks": "Quick Links",
+    "services": "Transfer Services",
+    "legal": "Legal & Terms",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "cancellation": "Cancellation Policy",
+    "rights": "All rights reserved. Barcelona Taxi Transfer.",
+    "support": "24/7 Customer Support:",
+    "home": "Home",
+    "about": "About Us",
+    "bookTransfer": "Book Your Transfer",
+    "trackRide": "Track Ride",
+    "faq": "FAQ",
+    "airportTransfers": "Airport Transfers",
+    "cruisePort": "Cruise Port",
+    "santsStation": "Sants Train Station",
+    "cityTours": "Barcelona City Tours",
+    "privateHourly": "Private Chauffeur Hourly",
+    "groupTransfers": "Large Group Transfers"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about our private transfer and chauffeur services in Barcelona.",
+    "searchPlaceholder": "Search questions..."
+  },
+  "about_page": {
+    "title": "About Barcelona Taxi Transfer",
+    "subtitle": "Barcelona's most trusted private transfer and premium chauffeur service.",
+    "mission": "Our Mission",
+    "missionText": "To provide safe, punctual, and premium private transportation across Barcelona and Catalonia with complete transparency and professionalism.",
+    "team": "Our Team",
+    "fleet": "Our Fleet",
+    "contact": "Contact Us"
+  },
+  "airport": {
+    "title": "Airport Transfer Service",
+    "subtitle": "Seamless private transfers to and from Barcelona El Prat Airport (BCN), Girona, Reus, and more.",
+    "bookNow": "Book Airport Transfer"
+  },
+  "cruise": {
+    "title": "Cruise Port Transfer Service",
+    "subtitle": "Direct transfers to and from all Barcelona Cruise Port terminals and piers.",
+    "bookNow": "Book Port Transfer"
+  },
+  "sants": {
+    "title": "Sants Station Transfer Service",
+    "subtitle": "Professional meet & greet pickups at Barcelona Sants high-speed train station.",
+    "bookNow": "Book Station Transfer"
+  },
+  "cityTransfers": {
+    "title": "City Transfer Service",
+    "subtitle": "Point-to-point private transfers within Barcelona and the greater metropolitan area.",
+    "bookNow": "Book City Transfer"
+  },
+  "cityTours": {
+    "title": "Private City Tours",
+    "subtitle": "Discover Barcelona's iconic landmarks with a dedicated private chauffeur at €65/hour.",
+    "bookNow": "Book Private Tour"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "How we collect, use, and protect your personal information."
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "subtitle": "Please read our terms of service carefully before booking."
+  },
+  "cancellationPolicy": {
+    "title": "Cancellation & Refund Policy",
+    "subtitle": "Our flexible cancellation terms for all booking types."
+  }
+}

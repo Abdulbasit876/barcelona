@@ -1,0 +1,301 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "airport": "Traslados Aeropuerto",
+    "cruise": "Puerto Crucero",
+    "sants": "Estación Sants",
+    "cityTransfers": "Traslados Ciudad",
+    "tours": "Tours Ciudad",
+    "famousPlaces": "Lugares Famosos",
+    "fleet": "Nuestra Flota",
+    "manageBooking": "Gestionar Reserva",
+    "customQuote": "Presupuesto",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "bookNow": "Reservar Ahora",
+    "phone": "+34 930 000 000"
+  },
+  "hero": {
+    "badge": "Chófer Privado Premium y Traslados en Barcelona",
+    "title": "Tu Viaje Comienza Aquí Siempre a Tiempo",
+    "titleLine1": "Tu Viaje Comienza Aquí",
+    "titleLine2": "Siempre a Tiempo",
+    "subtitle": "Traslados al aeropuerto, servicio de taxi y transporte privado en Barcelona.",
+    "bookTransfer": "Reservar tu Traslado",
+    "exploreBarcelona": "Explorar Barcelona",
+    "features": {
+      "fixedPrice": "Tarifas Fijas Garantizadas",
+      "flightTracking": "Seguimiento de Vuelos Gratuito",
+      "waiting": "Hasta 60 Min de Espera Gratuita",
+      "comfort": "Flota Premium y Chóferes"
+    },
+    "serviceBar": {
+      "airport": "Traslados Aeropuerto",
+      "airportSub": "Aeropuerto BCN",
+      "taxi": "Servicio Taxi",
+      "taxiSub": "Ciudad y Alrededores",
+      "cruise": "Puerto Crucero",
+      "cruiseSub": "Traslados Terminales",
+      "private": "Traslados Privados",
+      "privateSub": "Hoteles • Negocios • Eventos"
+    }
+  },
+  "widget": {
+    "title": "Calcular Tarifa y Reservar al Instante",
+    "pickup": "Lugar de Recogida / Aeropuerto / Hotel",
+    "pickupPlaceholder": "Ej. Aeropuerto El Prat de Barcelona (BCN) Terminal 1",
+    "destination": "Destino / Hotel / Dirección",
+    "destinationPlaceholder": "Ej. Hotel Arts, Passeig de Gràcia, o Puerto de Cruceros",
+    "date": "Fecha de Recogida",
+    "time": "Hora de Recogida",
+    "passengers": "Pasajeros",
+    "luggage": "Equipaje",
+    "serviceType": "Tipo de Servicio",
+    "types": {
+      "airport": "Traslado Aeropuerto",
+      "cruise": "Traslado Puerto Crucero",
+      "sants": "Traslado Estación Sants",
+      "city": "Traslado Ciudad",
+      "tour": "Tour Privado Ciudad",
+      "group": "Transporte Grupo"
+    },
+    "continue": "Calcular Tarifa y Elegir Vehículo",
+    "pricingNotice": "Tarifas metropolitanas oficiales reguladas y precios fijos transparentes."
+  },
+  "services": {
+    "title": "Servicios de Traslado Exclusivos",
+    "subtitle": "Transporte privado ejecutivo adaptado para viajeros de ocio y negocios en toda Cataluña.",
+    "airport": {
+      "title": "Traslados Aeropuerto Barcelona (BCN)",
+      "desc": "Recepción en Terminal 1 o 2 con 60 minutos de espera gratuita y seguimiento de vuelos.",
+      "action": "Reservar Traslado Aeropuerto"
+    },
+    "cruise": {
+      "title": "Traslados Puerto de Cruceros Barcelona",
+      "desc": "Traslados directos de puerta a barco a todos los muelles Moll Adossat.",
+      "action": "Reservar Traslado Puerto"
+    },
+    "sants": {
+      "title": "Traslados Estación Sants Barcelona",
+      "desc": "Recogidas puntuales en la estación de tren de alta velocidad AVE/Ouigo.",
+      "action": "Reservar Traslado Estación"
+    },
+    "tours": {
+      "title": "Tours Privados en la Ciudad",
+      "desc": "Explora Sagrada Família, Park Güell y Montserrat a tu ritmo con un chófer dedicado (€65/hr).",
+      "action": "Ver Tours Ciudad"
+    },
+    "executive": {
+      "title": "Chófer Ejecutivo y VIP",
+      "desc": "Vehículos premium Mercedes-Benz Clase E y Clase S para eventos corporativos y viajes VIP.",
+      "action": "Reservar Viaje Ejecutivo"
+    },
+    "group": {
+      "title": "Minivanes de Lujo y Traslados en Grupo",
+      "desc": "Mercedes Clase V y furgonetas espaciosas para familias, equipaje y delegaciones.",
+      "action": "Reservar Traslado Grupo"
+    },
+    "company": {
+      "title": "Viaje para Empresas",
+      "desc": "Soluciones de transporte corporativo para reuniones de negocios, eventos y giras. Tarifa fija por hora.",
+      "action": "Reservar Viaje Empresarial"
+    }
+  },
+  "whyUs": {
+    "title": "Por Qué Elegir Barcelona Taxi Transfer",
+    "subtitle": "Seguridad, puntualidad y comodidad sin compromiso para viajeros exigentes.",
+    "item1Title": "Tarifas Fijas Transparentes",
+    "item1Desc": "Sin cargos de peaje ocultos, sin suplementos nocturnos. Lo que ves es lo que pagas.",
+    "item2Title": "Chóferes VTC y Taxi Profesionales",
+    "item2Desc": "Profesionales con licencia y corteses que hablan inglés, con gran conocimiento de Barcelona.",
+    "item3Title": "Generosa Política de Espera Gratuita",
+    "item3Desc": "60 minutos en BCN Airport, 30 minutos en Puerto Crucero y 15 minutos en ciudad.",
+    "item4Title": "Reservas Anticipadas y Soporte 24h",
+    "item4Desc": "Seguimos tu llegada de vuelo en tiempo real y te ofrecemos soporte 24/7 por teléfono y WhatsApp."
+  },
+  "about": {
+    "badge": "Sobre Barcelona Taxi Transfer",
+    "title": "El Servicio de Traslado Privado Más Confiable de Barcelona",
+    "desc1": "Fundados en el corazón de Barcelona, somos una empresa licenciada de transporte privado (VTC) que ofrece traslados premium en toda la región metropolitana catalana.",
+    "desc2": "Nuestra flota de vehículos Mercedes-Benz de lujo, junto con un equipo de chóferes profesionales y multilingüe, garantiza una experiencia de viaje inigualable.",
+    "bookBtn": "Reservar tu Traslado Ahora",
+    "quoteBtn": "Solicitar Presupuesto Personalizado",
+    "stats": {
+      "drivers": "Chóferes Dedicados",
+      "network": "Red de Socios",
+      "rating": "Puntuación Media",
+      "support": "Soporte Disponible"
+    }
+  },
+  "cta": {
+    "badge": "¿Listo para un Viaje Perfecto?",
+    "title": "Experimenta Barcelona con",
+    "titleHighlight": "Comodidad y Lujo Total",
+    "subtitle": "Reserva ahora tu traslado privado con tarifas fijas, chóferes VTC verificados y seguimiento de vuelos.",
+    "bookOnline": "Reservar Traslado Online",
+    "customQuote": "Solicitar Presupuesto",
+    "feature1": "Sin costos ocultos ni tarifas nocturnas",
+    "feature2": "Cancelación gratuita hasta 24h antes",
+    "feature3": "Despacho telefónico y WhatsApp 24/7"
+  },
+  "famousPlacesPreview": {
+    "badge": "Los Mejores Lugares de Barcelona",
+    "title": "Descubre los Lugares Famosos de Barcelona",
+    "subtitle": "Visita las maravillas arquitectónicas y los atractivos escénicos con nuestro servicio de chófer privado.",
+    "exploreAll": "Ver las 10 Atracciones",
+    "bookRide": "Reservar Viaje Aquí"
+  },
+  "fleetPreview": {
+    "badge": "Nuestros Vehículos de Lujo",
+    "title": "Una Flota para Cada Viaje",
+    "subtitle": "Vehículos premium perfectamente mantenidos, climatizados y completamente licenciados.",
+    "viewAll": "Ver Flota Completa",
+    "capacity": "Capacidad",
+    "suitcases": "Equipaje",
+    "bookVehicle": "Seleccionar Vehículo"
+  },
+  "booking": {
+    "title": "Reservar tu Traslado en Barcelona",
+    "step1": "1. Detalles del Viaje",
+    "step2": "2. Información del Pasajero",
+    "step3": "3. Selección de Vehículo",
+    "step4": "4. Revisión de Tarifa",
+    "step5": "5. Confirmación y Pago",
+    "pickup": "Lugar de Recogida",
+    "destination": "Destino",
+    "dateTime": "Fecha y Hora",
+    "flightNumber": "Número de Vuelo (ej. VY6102)",
+    "flightHelp": "Monitorizamos el estado del vuelo para ajustes automáticos de llegada.",
+    "cruiseShip": "Nombre del Crucero o Muelle",
+    "trainNumber": "Número de Tren (ej. AVE 03102)",
+    "specialRequests": "Solicitudes Especiales / Sillas de Bebé / Notas",
+    "fullName": "Nombre Completo",
+    "email": "Dirección de Email",
+    "phone": "Número de Teléfono (con código de país)",
+    "passengersCount": "Número de Pasajeros",
+    "luggageCount": "Equipaje Estándar / Maletas",
+    "cabinLuggageCount": "Equipaje de Mano (Cabina)",
+    "childSeats": "Sillas de Seguridad Infantil",
+    "selectVehicle": "Seleccionar Categoría de Vehículo",
+    "fareSummary": "Desglose de Tarifa",
+    "basePrice": "Tarifa Base",
+    "vehicleSurcharge": "Suplemento de Categoría",
+    "total": "Tarifa Total (EUR)",
+    "waitingPolicy": "Tiempo de Espera Gratuita Aplicable",
+    "confirmAndPay": "Proceder al Pago",
+    "confirmBooking": "Enviar Solicitud de Reserva",
+    "pendingNotice": "Las reservas de Puerto Crucero y Estación Sants están sujetas a verificación.",
+    "agreeTerms": "Acepto los Términos de Servicio y la Política de Cancelación.",
+    "depositNote": "Se cobra un depósito anticipado del 20% online. El saldo restante se paga al chófer.",
+    "depositAmount": "Depósito (20% Online)",
+    "remainingBalance": "Saldo Restante (al Chófer)",
+    "payDeposit": "Pagar Depósito y Confirmar Reserva",
+    "distance": "Distancia Estimada",
+    "duration": "Duración Estimada"
+  },
+  "manage": {
+    "title": "Gestionar Mi Reserva",
+    "subtitle": "Accede a tu reserva, verifica el estado del chófer o solicita modificaciones.",
+    "tokenInput": "Número de Referencia de Reserva",
+    "emailOrPhone": "Email o Número de Teléfono",
+    "lookup": "Buscar Reserva",
+    "lookupDesc": "Introduce tu referencia de reserva y email o teléfono para ver tu reserva.",
+    "status": "Estado de Reserva",
+    "payment": "Estado de Pago",
+    "assignedDriver": "Chófer Asignado",
+    "driverVehicle": "Vehículo y Matrícula",
+    "downloadReceipt": "Descargar Factura PDF / Recibo",
+    "cancelBooking": "Cancelar Reserva",
+    "revisedFareNotice": "La tarifa ha sido revisada por nuestro equipo. Por favor, revisa y acepta antes de pagar.",
+    "acceptRevisedFare": "Aceptar Tarifa Revisada y Pagar",
+    "rejectRevision": "Rechazar y Cancelar",
+    "noBooking": "No se encontró ninguna reserva",
+    "notFound": "Reserva No Encontrada",
+    "notFoundDesc": "No pudimos encontrar una reserva con esos datos. Por favor, revisa tu email de confirmación.",
+    "driverPending": "Chófer Aún No Asignado",
+    "driverPendingDesc": "Tu chófer será asignado antes de tu recogida. Recibirás una actualización por email.",
+    "payRemaining": "Pagar Saldo Restante",
+    "paidFull": "Totalmente Pagado Online",
+    "totalFare": "Tarifa Total",
+    "advancePaid": "Anticipo Pagado",
+    "remainingBalance": "Saldo Restante",
+    "paymentMethod": "Método de Pago",
+    "copyRef": "Copiar Referencia",
+    "copied": "¡Copiado!",
+    "trackYourRide": "Seguir tu Viaje",
+    "secureAccess": "Enlace de Acceso Seguro",
+    "secureAccessDesc": "Guarda este enlace para acceder a tu reserva sin necesidad de iniciar sesión:"
+  },
+  "places": {
+    "title": "Lugares Famosos en Barcelona",
+    "subtitle": "Descubre las joyas arquitectónicas más icónicas y playas mediterráneas de Barcelona.",
+    "allCategories": "Todas las Categorías",
+    "searchPlaceholder": "Buscar atracciones (ej. Sagrada Família, Park Güell)...",
+    "explorePlace": "Explorar Lugar",
+    "bookTransfer": "Reservar Viaje Aquí",
+    "coordinates": "Coordenadas",
+    "duration": "Tiempo de Visita Recomendado"
+  },
+  "fleet": {
+    "title": "Nuestra Flota de Vehículos",
+    "subtitle": "Explora nuestra amplia gama de sedanes de lujo, coches ejecutivos eléctricos y furgonetas VIP.",
+    "models": "Modelos de Ejemplo",
+    "maxPassengers": "Pasajeros Máximos",
+    "maxLuggage": "Capacidad de Equipaje",
+    "features": "Amenidades Incluidas",
+    "select": "Reservar Esta Categoría"
+  },
+  "quote": {
+    "title": "Solicitar Presupuesto Personalizado",
+    "subtitle": "¿Viajas fuera del área metropolitana de Barcelona o necesitas traslados corporativos?",
+    "name": "Nombre Completo",
+    "email": "Dirección de Email",
+    "phone": "Número de Teléfono",
+    "message": "Detalles del Viaje y Requisitos",
+    "submit": "Enviar Solicitud",
+    "success": "Tu solicitud ha sido recibida. Nuestro equipo te enviará una propuesta en 2 horas."
+  },
+  "contact": {
+    "title": "Contactar Barcelona Taxi Transfer",
+    "subtitle": "Nuestro equipo de atención multilingüe está disponible 24 horas al día, 7 días a la semana.",
+    "name": "Tu Nombre",
+    "email": "Tu Email",
+    "phone": "Número de Teléfono",
+    "subject": "Asunto",
+    "message": "Tu Mensaje",
+    "send": "Enviar Mensaje",
+    "success": "Gracias. Tu mensaje ha sido enviado correctamente.",
+    "address": "Dirección",
+    "hours": "Horario de Atención",
+    "hoursValue": "24 horas al día, 7 días a la semana",
+    "whatsapp": "WhatsApp",
+    "emailLabel": "Email"
+  },
+  "footer": {
+    "tagline": "El servicio de traslado privado y chófer de lujo líder en Barcelona.",
+    "quickLinks": "Enlaces Rápidos",
+    "services": "Servicios de Traslado",
+    "legal": "Legal y Términos",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos y Condiciones",
+    "cancellation": "Política de Cancelación",
+    "rights": "Todos los derechos reservados. Barcelona Taxi Transfer.",
+    "support": "Soporte al Cliente 24/7:",
+    "home": "Inicio",
+    "about": "Nosotros",
+    "bookTransfer": "Reservar Traslado",
+    "trackRide": "Seguir Viaje",
+    "faq": "Preguntas Frecuentes",
+    "airportTransfers": "Traslados Aeropuerto",
+    "cruisePort": "Puerto Crucero",
+    "santsStation": "Estación Sants",
+    "cityTours": "Tours Ciudad Barcelona",
+    "privateHourly": "Chófer Privado por Horas",
+    "groupTransfers": "Traslados Grupo Grande"
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Todo lo que necesitas saber sobre nuestros servicios de traslado privado en Barcelona.",
+    "searchPlaceholder": "Buscar preguntas..."
+  }
+}

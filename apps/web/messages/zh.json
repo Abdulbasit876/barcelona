@@ -1,0 +1,301 @@
+{
+  "nav": {
+    "home": "首页",
+    "airport": "机场接送",
+    "cruise": "邮轮港口",
+    "sants": "圣茨火车站",
+    "cityTransfers": "城市接送",
+    "tours": "城市游览",
+    "famousPlaces": "著名景点",
+    "fleet": "我们的车队",
+    "manageBooking": "管理预订",
+    "customQuote": "定制报价",
+    "about": "关于我们",
+    "contact": "联系我们",
+    "bookNow": "立即预订",
+    "phone": "+34 930 000 000"
+  },
+  "hero": {
+    "badge": "巴塞罗那高端私人司机和接送服务",
+    "title": "您的旅程从这里开始 始终准时",
+    "titleLine1": "您的旅程从这里开始",
+    "titleLine2": "始终准时",
+    "subtitle": "巴塞罗那机场接送、出租车服务及私人运输。",
+    "bookTransfer": "预订您的接送",
+    "exploreBarcelona": "探索巴塞罗那",
+    "features": {
+      "fixedPrice": "保证固定价格",
+      "flightTracking": "免费航班跟踪",
+      "waiting": "最多60分钟免费等待",
+      "comfort": "豪华车队和司机"
+    },
+    "serviceBar": {
+      "airport": "机场接送",
+      "airportSub": "BCN机场",
+      "taxi": "出租车服务",
+      "taxiSub": "城市及周边",
+      "cruise": "邮轮港口",
+      "cruiseSub": "码头接送",
+      "private": "私人接送",
+      "privateSub": "酒店 • 商务 • 活动"
+    }
+  },
+  "widget": {
+    "title": "计算费用并立即预订",
+    "pickup": "接车地点 / 机场 / 酒店",
+    "pickupPlaceholder": "例如：巴塞罗那埃尔普拉特机场（BCN）1号航站楼",
+    "destination": "目的地 / 酒店 / 地址",
+    "destinationPlaceholder": "例如：艺术酒店、格拉西亚大道或邮轮港口",
+    "date": "接车日期",
+    "time": "接车时间",
+    "passengers": "乘客",
+    "luggage": "行李",
+    "serviceType": "服务类型",
+    "types": {
+      "airport": "机场接送",
+      "cruise": "邮轮港口接送",
+      "sants": "圣茨车站接送",
+      "city": "城市接送",
+      "tour": "私人城市游览",
+      "group": "团体运输"
+    },
+    "continue": "计算费用并选择车辆",
+    "pricingNotice": "官方大都市监管费率和透明固定价格。"
+  },
+  "services": {
+    "title": "专属接送服务",
+    "subtitle": "为加泰罗尼亚各地休闲和商务旅行者量身定制的高管私人运输服务。",
+    "airport": {
+      "title": "巴塞罗那机场（BCN）接送",
+      "desc": "在1号或2号航站楼提供无缝迎接服务，60分钟免费等待时间和直接航班跟踪。",
+      "action": "预订机场接送"
+    },
+    "cruise": {
+      "title": "巴塞罗那邮轮港口接送",
+      "desc": "直达Moll Adossat所有码头（A、B、C、D、E航站楼和世贸中心）的门对船接送。",
+      "action": "预订港口接送"
+    },
+    "sants": {
+      "title": "巴塞罗那圣茨站接送",
+      "desc": "在AVE/Ouigo高铁火车站提供准时接送服务，在主到达大厅直接迎接。",
+      "action": "预订火车站接送"
+    },
+    "tours": {
+      "title": "私人观光游览",
+      "desc": "以您的节奏探索圣家堂、古埃尔公园和蒙特塞拉特，配有专属司机（€65/小时）。",
+      "action": "探索城市游览"
+    },
+    "executive": {
+      "title": "高管和VIP专车",
+      "desc": "豪华梅赛德斯-奔驰E级和S级车辆，用于企业路演、峰会和VIP出行。",
+      "action": "预订高管专车"
+    },
+    "group": {
+      "title": "豪华小型巴士和团体接送",
+      "desc": "梅赛德斯V级和宽敞客车，适合家庭、行李和高管代表团。",
+      "action": "预订团体接送"
+    },
+    "company": {
+      "title": "企业出行",
+      "desc": "专为商务会议、活动和高管路演提供企业运输解决方案。按固定小时费率计费。",
+      "action": "预订企业行程"
+    }
+  },
+  "whyUs": {
+    "title": "为什么选择巴塞罗那出租车转运",
+    "subtitle": "为挑剔旅行者提供无妥协的安全、准时和舒适服务。",
+    "item1Title": "透明固定费率",
+    "item1Desc": "没有隐藏通行费，没有夜间附加费，没有意外涨价。您看到的就是您支付的。",
+    "item2Title": "专业VTC和出租车司机",
+    "item2Desc": "英语流利、持证上岗、礼貌专业，深入了解巴塞罗那的路线。",
+    "item3Title": "慷慨的免费等待政策",
+    "item3Desc": "BCN机场免费等待60分钟，邮轮港口30分钟，城市内15分钟。",
+    "item4Title": "高级预订和24小时支持",
+    "item4Desc": "我们实时跟踪您的航班到达，并通过电话和WhatsApp提供24/7客户支持。"
+  },
+  "about": {
+    "badge": "关于巴塞罗那出租车转运",
+    "title": "巴塞罗那最值得信赖的私人接送服务",
+    "desc1": "我们成立于巴塞罗那市中心，是一家持牌私人车辆运输公司（VTC），在整个加泰罗尼亚都市区提供优质接送服务。",
+    "desc2": "我们的豪华梅赛德斯-奔驰车队，加上专业多语言司机团队，确保为每位乘客提供无与伦比的旅行体验。",
+    "bookBtn": "立即预订您的接送",
+    "quoteBtn": "申请定制报价",
+    "stats": {
+      "drivers": "专属司机",
+      "network": "合作伙伴网络",
+      "rating": "平均评分",
+      "support": "全天候支持"
+    }
+  },
+  "cta": {
+    "badge": "准备好享受顺畅的旅程了吗？",
+    "title": "体验巴塞罗那",
+    "titleHighlight": "纯粹的舒适与奢华",
+    "subtitle": "现在预订您的私人机场、邮轮港口或城市接送，享受透明固定费率、经验证的VTC司机和免费航班监控。",
+    "bookOnline": "在线预订接送",
+    "customQuote": "申请定制报价",
+    "feature1": "没有隐藏费用或夜间费用",
+    "feature2": "24小时前免费取消",
+    "feature3": "24/7电话和WhatsApp调度"
+  },
+  "famousPlacesPreview": {
+    "badge": "巴塞罗那顶级地标",
+    "title": "发现巴塞罗那的著名景点",
+    "subtitle": "乘坐我们的私人司机服务，参观世界著名的建筑奇迹和风景名胜。",
+    "exploreAll": "查看全部10个景点",
+    "bookRide": "预订前往此地的行程"
+  },
+  "fleetPreview": {
+    "badge": "我们的豪华车辆",
+    "title": "适合每次旅程的车队",
+    "subtitle": "精心维护、空调完善、全面持牌的优质车辆。",
+    "viewAll": "探索完整车队",
+    "capacity": "容量",
+    "suitcases": "行李",
+    "bookVehicle": "选择车辆"
+  },
+  "booking": {
+    "title": "预订您的巴塞罗那接送",
+    "step1": "1. 行程详情",
+    "step2": "2. 乘客信息",
+    "step3": "3. 车辆选择",
+    "step4": "4. 费用审核",
+    "step5": "5. 确认和付款",
+    "pickup": "接车地点",
+    "destination": "目的地",
+    "dateTime": "日期和时间",
+    "flightNumber": "航班号（例如VY6102）",
+    "flightHelp": "我们监控航班状态以进行自动降落调整。",
+    "cruiseShip": "邮轮名称或码头",
+    "trainNumber": "列车号（例如AVE 03102）",
+    "specialRequests": "特殊要求 / 儿童座椅 / 备注",
+    "fullName": "全名",
+    "email": "电子邮件地址",
+    "phone": "电话号码（含国家代码）",
+    "passengersCount": "乘客人数",
+    "luggageCount": "标准托运行李箱",
+    "childSeats": "儿童安全座椅",
+    "selectVehicle": "选择车辆类别",
+    "fareSummary": "费用明细",
+    "basePrice": "基础费用",
+    "vehicleSurcharge": "车辆类别附加费",
+    "total": "总费用（欧元）",
+    "waitingPolicy": "适用免费等待时间",
+    "confirmAndPay": "继续付款",
+    "confirmBooking": "提交预订申请",
+    "pendingNotice": "邮轮港口和圣茨站预订须经调度员核实。",
+    "agreeTerms": "我同意服务条款和取消政策。",
+    "depositNote": "在线收取20%预付定金。剩余余额支付给司机。",
+    "depositAmount": "定金（在线20%）",
+    "remainingBalance": "剩余余额（付给司机）",
+    "payDeposit": "支付定金并确认预订",
+    "distance": "预计距离",
+    "duration": "预计时间",
+    "cabinLuggageCount": "随身登机箱 (手提行李)"
+  },
+  "manage": {
+    "title": "管理我的预订",
+    "subtitle": "访问您的预订，查看司机状态，下载发票，或请求修改。",
+    "tokenInput": "预订参考号",
+    "emailOrPhone": "电子邮件地址或电话号码",
+    "lookup": "查找预订",
+    "lookupDesc": "输入您的预订参考号和电子邮件或电话以查看您的预订。",
+    "status": "预订状态",
+    "payment": "付款状态",
+    "assignedDriver": "指定司机",
+    "driverVehicle": "车辆和车牌",
+    "downloadReceipt": "下载PDF发票/收据",
+    "cancelBooking": "取消预订",
+    "revisedFareNotice": "我们的调度团队已修改此行程的费用。请在完成付款前审核并接受。",
+    "acceptRevisedFare": "接受修订费用并付款",
+    "rejectRevision": "拒绝并取消",
+    "noBooking": "未找到预订",
+    "notFound": "预订未找到",
+    "notFoundDesc": "我们无法找到与您信息匹配的预订。请查看您的确认邮件。",
+    "driverPending": "司机尚未分配",
+    "driverPendingDesc": "您的司机将在接车前分配。您将通过电子邮件收到更新。",
+    "payRemaining": "支付剩余金额",
+    "paidFull": "在线全额付款",
+    "totalFare": "总费用",
+    "advancePaid": "已付定金",
+    "remainingBalance": "剩余余额",
+    "paymentMethod": "付款方式",
+    "copyRef": "复制参考号",
+    "copied": "已复制！",
+    "trackYourRide": "跟踪您的行程",
+    "secureAccess": "安全访问链接",
+    "secureAccessDesc": "收藏此链接，无需登录即可随时访问您的预订："
+  },
+  "places": {
+    "title": "巴塞罗那著名景点",
+    "subtitle": "发现巴塞罗那最具标志性的建筑瑰宝、历史街区和地中海海滩。",
+    "allCategories": "全部类别",
+    "searchPlaceholder": "搜索景点（例如圣家堂、古埃尔公园）...",
+    "explorePlace": "探索地标",
+    "bookTransfer": "预订前往此地的行程",
+    "coordinates": "坐标",
+    "duration": "建议游览时间"
+  },
+  "fleet": {
+    "title": "我们的车辆车队",
+    "subtitle": "探索我们广泛的豪华轿车、电动高管车和大容量VIP面包车。",
+    "models": "示例型号",
+    "maxPassengers": "最大乘客数",
+    "maxLuggage": "行李容量",
+    "features": "包含设施",
+    "select": "预订此类别"
+  },
+  "quote": {
+    "title": "申请定制报价",
+    "subtitle": "在巴塞罗那都市区以外旅行，需要多日行程，或组织大型企业活动？",
+    "name": "全名",
+    "email": "电子邮件地址",
+    "phone": "电话号码",
+    "message": "行程详情和要求",
+    "submit": "提交报价申请",
+    "success": "您的报价申请已收到。我们的团队将在2小时内审核行程并发送定制提案。"
+  },
+  "contact": {
+    "title": "联系巴塞罗那出租车转运",
+    "subtitle": "我们的多语言客户服务团队每天24小时、每周7天提供服务。",
+    "name": "您的姓名",
+    "email": "您的电子邮件",
+    "phone": "电话号码",
+    "subject": "主题",
+    "message": "您的留言",
+    "send": "发送消息",
+    "success": "感谢您。您的消息已成功发送。",
+    "address": "地址",
+    "hours": "营业时间",
+    "hoursValue": "每天24小时，每周7天",
+    "whatsapp": "WhatsApp",
+    "emailLabel": "电子邮件"
+  },
+  "footer": {
+    "tagline": "巴塞罗那首席私人接送和豪华司机服务。",
+    "quickLinks": "快速链接",
+    "services": "接送服务",
+    "legal": "法律条款",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "cancellation": "取消政策",
+    "rights": "版权所有。巴塞罗那出租车转运。",
+    "support": "24/7客户支持：",
+    "home": "首页",
+    "about": "关于我们",
+    "bookTransfer": "预订接送",
+    "trackRide": "跟踪行程",
+    "faq": "常见问题",
+    "airportTransfers": "机场接送",
+    "cruisePort": "邮轮港口",
+    "santsStation": "圣茨火车站",
+    "cityTours": "巴塞罗那城市游览",
+    "privateHourly": "私人司机按小时计",
+    "groupTransfers": "大型团体接送"
+  },
+  "faq": {
+    "title": "常见问题解答",
+    "subtitle": "关于我们在巴塞罗那私人接送和司机服务的一切信息。",
+    "searchPlaceholder": "搜索问题..."
+  }
+}
