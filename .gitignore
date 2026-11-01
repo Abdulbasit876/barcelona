@@ -5,9 +5,11 @@ node_modules/
 
 # Build outputs
 .next/
-dist/
 build/
 out/
+# Note: packages/shared/dist is committed so Vercel can use it
+apps/api/dist/
+admin/api/dist/
 
 # Environment files (NEVER commit these - add them in Vercel/Render dashboard)
 .env
