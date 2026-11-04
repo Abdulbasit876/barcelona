@@ -208,7 +208,7 @@ export default function BookingConfirmationPage({
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white mt-1">
               Thank You for Your Booking!
             </h1>
-            <div className="flex items-center justify-center space-x-2 mt-3">
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
               <span className="text-xs sm:text-sm text-ice-300">
                 Your booking reference is:
               </span>

@@ -48,7 +48,7 @@ export default function AboutSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-white overflow-hidden">
+    <section ref={sectionRef} className="py-16 sm:py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
@@ -105,7 +105,7 @@ export default function AboutSection() {
               <span className="text-gold-600 text-xs font-black uppercase tracking-[0.2em]">{t('badge')}</span>
             </div>
 
-            <h2 className="text-4xl sm:text-5xl font-black text-navy-950 leading-tight tracking-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-navy-950 leading-tight tracking-tight">
               {t('title')}
             </h2>
 
@@ -117,7 +117,7 @@ export default function AboutSection() {
             {/* Stats grid */}
             <div
               ref={statsRef}
-              className="grid grid-cols-2 gap-4 pt-4"
+              className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-3 sm:gap-4 pt-4"
             >
               {stats.map(({ icon: Icon, value, label }) => (
                 <div
@@ -136,7 +136,7 @@ export default function AboutSection() {
             </div>
 
             {/* CTA */}
-            <div className="flex items-center space-x-4 pt-2">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
               <Link
                 href="/book"
                 className="inline-flex items-center px-6 py-3 rounded-full bg-navy-950 hover:bg-navy-800 text-white font-bold text-sm transition-all hover:-translate-y-0.5 shadow-lg"

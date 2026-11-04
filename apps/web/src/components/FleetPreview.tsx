@@ -13,7 +13,7 @@ export default function FleetPreview({ locale }: { locale: string }) {
   const vehicles = SEED_VEHICLES.slice(0, 3); // Economy, Standard, Premium
 
   return (
-    <section className="py-24 bg-[#0a1628] relative">
+    <section className="py-16 sm:py-24 bg-[#0a1628] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-4 md:space-y-0">
           <div>
@@ -36,7 +36,7 @@ export default function FleetPreview({ locale }: { locale: string }) {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {vehicles.map((v) => {
             const locKey = (locale as 'en' | 'es' | 'fr' | 'it') || 'en';
             const desc = v.description[locKey] || v.description.en;

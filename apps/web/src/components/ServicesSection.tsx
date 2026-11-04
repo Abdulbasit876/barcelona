@@ -61,7 +61,7 @@ export default function ServicesSection({ locale }: { locale: string }) {
   ];
 
   return (
-    <section className="py-24 bg-navy-950 relative">
+    <section className="py-16 sm:py-24 bg-navy-950 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-xs uppercase tracking-widest text-gold-400 font-bold">
@@ -75,13 +75,13 @@ export default function ServicesSection({ locale }: { locale: string }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {services.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.key}
-                className="navy-card rounded-2xl p-7 flex flex-col justify-between transition-all duration-300 group"
+                className="navy-card rounded-2xl p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">

@@ -80,7 +80,7 @@ export default function Hero({ locale }: { locale: string }) {
           {/* Main headline */}
           <h1
             ref={headlineRef}
-            className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6"
+            className="text-3xl sm:text-5xl lg:text-7xl font-black leading-[1.05] tracking-tight mb-6"
           >
             <span className="text-white block">{t('titleLine1')}</span>
             <span className="text-white block text-[0.42em] leading-normal font-bold tracking-normal mt-2">{t('titleLine2')}</span>
@@ -112,7 +112,7 @@ export default function Hero({ locale }: { locale: string }) {
       {/* Services bar at bottom */}
       <div className="relative z-10 px-4 sm:px-6 lg:px-8 pb-8" ref={servicesRef}>
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
             {services.map(({ icon: Icon, titleKey, subKey, href }) => (
               <Link
                 key={href}

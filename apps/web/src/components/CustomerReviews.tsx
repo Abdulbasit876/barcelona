@@ -226,7 +226,7 @@ export default function CustomerReviews() {
   };
 
   return (
-    <section className="py-24 bg-white relative border-t border-gray-100">
+    <section className="py-16 sm:py-24 bg-white relative border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-4 md:space-y-0">
@@ -383,7 +383,7 @@ export default function CustomerReviews() {
       {/* Create / Edit Review Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white border border-gray-200 rounded-2xl max-w-lg w-full p-4 sm:p-6 md:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <button
               onClick={() => {
                 setModalOpen(false);

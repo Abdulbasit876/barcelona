@@ -194,7 +194,7 @@ export default function SecureTrackingPage({
         </div>
 
         {/* 4 Status KPI cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           <div className="navy-card rounded-2xl p-5">
             <span className="text-[11px] text-ice-400 uppercase font-semibold">Status</span>
             <div className="text-sm font-bold text-white mt-1 flex items-center">

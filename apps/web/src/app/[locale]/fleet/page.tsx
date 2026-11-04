@@ -33,7 +33,7 @@ export default function FleetPage({
         </div>
 
         {/* Vehicles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {SEED_VEHICLES.map((vehicle) => {
             const desc = vehicle.description[locKey] || vehicle.description.en;
 

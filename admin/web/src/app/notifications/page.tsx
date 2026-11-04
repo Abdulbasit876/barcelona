@@ -71,7 +71,7 @@ export default function NotificationsPage() {
     <>
       <Header title="Push Notification Center" subtitle="Manage phone alerts for every new booking" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Push Setup Card */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2 bg-slate-50/50">
@@ -79,7 +79,7 @@ export default function NotificationsPage() {
             <h3 className="text-sm font-extrabold text-slate-900">Mobile & Browser Push Alerts</h3>
           </div>
 
-          <div className="p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
             {/* Explainer */}
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
               <div className="font-extrabold text-slate-900 mb-2">How instant phone notifications work:</div>

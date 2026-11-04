@@ -28,30 +28,38 @@ export function StatCard({
   }[colorScheme];
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-          {title}
-        </span>
-        <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${colorStyles}`}>
-          <Icon className="w-4 h-4" />
+    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between">
+      <div>
+        <div className="flex items-center justify-between mb-2 sm:mb-3 gap-2">
+          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 truncate">
+            {title}
+          </span>
+          <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl border flex items-center justify-center flex-shrink-0 ${colorStyles}`}>
+            <Icon className="w-4 h-4" />
+          </div>
+        </div>
+
+        <div className="flex items-baseline justify-between gap-1">
+          <div className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight truncate">
+            {value}
+          </div>
+          {trend && (
+            <span
+              className={`text-[10px] sm:text-xs font-bold flex-shrink-0 ${
+                trendUp ? 'text-emerald-600' : 'text-slate-400'
+              }`}
+            >
+              {trend}
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="flex items-baseline justify-between">
-        <div className="text-2xl font-black text-slate-900 tracking-tight">{value}</div>
-        {trend && (
-          <span
-            className={`text-xs font-bold ${
-              trendUp ? 'text-emerald-600' : 'text-slate-400'
-            }`}
-          >
-            {trend}
-          </span>
-        )}
-      </div>
-
-      {subtitle && <p className="text-[11px] text-slate-500 mt-1 font-medium">{subtitle}</p>}
+      {subtitle && (
+        <p className="text-[10px] sm:text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }

@@ -28,7 +28,7 @@ export function RevenueChart({ data, onPeriodChange }: RevenueChartProps) {
   const totalPeriodRevenue = points.reduce((acc, p) => acc + p.revenue, 0);
 
   return (
-    <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm">
+    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -59,43 +59,45 @@ export function RevenueChart({ data, onPeriodChange }: RevenueChartProps) {
         </div>
       </div>
 
-      {/* SVG Bar / Area visualization */}
-      <div className="mt-6 h-56 flex items-end gap-2 sm:gap-3 pt-6 pb-2 border-b border-slate-200">
-        {points.map((point) => {
-          const heightPct = Math.max((point.revenue / maxRevenue) * 100, 4);
-          const dayLabel = new Date(point.date).toLocaleDateString([], {
-            weekday: 'narrow',
-            day: 'numeric',
-          });
+      {/* Responsive Bar visualization with horizontal scroll safety on small devices */}
+      <div className="overflow-x-auto pb-1">
+        <div className="mt-6 h-56 flex items-end gap-1.5 sm:gap-3 pt-6 pb-2 border-b border-slate-200 min-w-[320px]">
+          {points.map((point) => {
+            const heightPct = Math.max((point.revenue / maxRevenue) * 100, 4);
+            const dayLabel = new Date(point.date).toLocaleDateString([], {
+              weekday: 'narrow',
+              day: 'numeric',
+            });
 
-          return (
-            <div
-              key={point.date}
-              className="flex-1 flex flex-col items-center group relative h-full justify-end"
-            >
-              {/* Tooltip */}
-              <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-20 bg-slate-900 text-white rounded-xl p-2 text-[10px] shadow-xl whitespace-nowrap">
-                <div className="font-bold text-amber-400">{point.date}</div>
-                <div>Revenue: €{point.revenue.toFixed(2)}</div>
-                <div className="text-slate-400">{point.bookings} ride(s)</div>
-              </div>
-
-              {/* Bar */}
+            return (
               <div
-                style={{ height: `${heightPct}%` }}
-                className="w-full max-w-[28px] rounded-t-md bg-gradient-to-t from-amber-500 to-amber-400 group-hover:from-amber-600 group-hover:to-amber-500 transition-all shadow-sm cursor-pointer"
-              />
+                key={point.date}
+                className="flex-1 flex flex-col items-center group relative h-full justify-end min-w-[14px]"
+              >
+                {/* Tooltip */}
+                <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-20 bg-slate-900 text-white rounded-xl p-2 text-[10px] shadow-xl whitespace-nowrap">
+                  <div className="font-bold text-amber-400">{point.date}</div>
+                  <div>Revenue: €{point.revenue.toFixed(2)}</div>
+                  <div className="text-slate-400">{point.bookings} ride(s)</div>
+                </div>
 
-              {/* Label */}
-              <span className="text-[10px] text-slate-500 font-semibold mt-2 truncate w-full text-center">
-                {dayLabel}
-              </span>
-            </div>
-          );
-        })}
+                {/* Bar */}
+                <div
+                  style={{ height: `${heightPct}%` }}
+                  className="w-full max-w-[28px] rounded-t-md bg-gradient-to-t from-amber-500 to-amber-400 group-hover:from-amber-600 group-hover:to-amber-500 transition-all shadow-sm cursor-pointer"
+                />
+
+                {/* Label */}
+                <span className="text-[10px] text-slate-500 font-semibold mt-2 truncate w-full text-center">
+                  {dayLabel}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 text-[11px] text-slate-500 font-medium">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-3 text-[11px] text-slate-500 font-medium">
         <span>* Calculated from verified booking & payment transactions</span>
         <span className="text-slate-900 font-bold">Peak Day: €{maxRevenue.toFixed(2)}</span>
       </div>

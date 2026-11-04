@@ -181,7 +181,7 @@ export default function BookingsPage() {
         onNewBookingClick={() => setShowCreate(true)}
       />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
         {/* KPI Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between">
@@ -370,7 +370,7 @@ export default function BookingsPage() {
         {/* Bookings Table */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-xs min-w-[900px]">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/80">
                   {['Reference', 'Customer', 'Transfer / Vehicle', 'Pickup Date & Location', 'Fare & Balance', 'Payment Status', 'Driver', 'Status', 'Actions'].map((h) => (
