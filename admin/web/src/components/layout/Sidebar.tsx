@@ -41,8 +41,8 @@ export function Sidebar() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('btt_admin_user');
-      if (stored) setUser(JSON.parse(stored));
+      const adminUser = ApiClient.getAdminUser();
+      if (adminUser) setUser(adminUser);
     } catch {}
 
     ApiClient.getPendingApprovals()

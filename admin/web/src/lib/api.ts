@@ -1,9 +1,261 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api/v1';
 
+const ADMIN_TOKEN_KEY = 'btt_admin_token';
+const ADMIN_REFRESH_TOKEN_KEY = 'btt_admin_refresh_token';
+const ADMIN_USER_KEY = 'btt_admin_user';
+const REMEMBER_ME_KEY = 'btt_admin_remember_me';
+const SAVED_EMAIL_KEY = 'btt_admin_saved_email';
+
 export class ApiClient {
-  private static getAdminToken(): string | null {
+  private static isRefreshing = false;
+  private static refreshPromise: Promise<boolean> | null = null;
+
+  // Cookie Helpers
+  private static setCookie(name: string, value: string, days?: number) {
+    if (typeof document === 'undefined') return;
+    let expires = '';
+    if (days !== undefined) {
+      const date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      expires = `; expires=${date.toUTCString()}; max-age=${days * 24 * 60 * 60}`;
+    }
+    document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax`;
+  }
+
+  private static getCookie(name: string): string | null {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  private static deleteCookie(name: string) {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax`;
+  }
+
+  public static getAdminToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('btt_admin_token') || 'dev-admin-master-token';
+
+    // 1. Session Storage (active browser session)
+    const sessionToken = sessionStorage.getItem(ADMIN_TOKEN_KEY);
+    if (sessionToken) return sessionToken;
+
+    // 2. Persistent Storage (Remember Me)
+    const localToken = localStorage.getItem(ADMIN_TOKEN_KEY);
+    if (localToken) return localToken;
+
+    // 3. Cookie fallback
+    const cookieToken = this.getCookie(ADMIN_TOKEN_KEY);
+    if (cookieToken) return cookieToken;
+
+    return null;
+  }
+
+  public static getRefreshToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return (
+      sessionStorage.getItem(ADMIN_REFRESH_TOKEN_KEY) ||
+      localStorage.getItem(ADMIN_REFRESH_TOKEN_KEY) ||
+      this.getCookie(ADMIN_REFRESH_TOKEN_KEY) ||
+      null
+    );
+  }
+
+  public static getAdminUser(): any | null {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = sessionStorage.getItem(ADMIN_USER_KEY) || localStorage.getItem(ADMIN_USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  public static isRememberMe(): boolean {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+  }
+
+  public static getSavedEmail(): string {
+    if (typeof window === 'undefined') return '';
+    return localStorage.getItem(SAVED_EMAIL_KEY) || localStorage.getItem('btt_saved_email') || '';
+  }
+
+  public static isTokenExpired(token?: string): boolean {
+    const tok = token || this.getAdminToken();
+    if (!tok) return true;
+    const parts = tok.split('.');
+    if (parts.length !== 3) return false;
+    try {
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      if (payload && typeof payload.exp === 'number') {
+        // 30 seconds threshold buffer
+        return Date.now() / 1000 + 30 >= payload.exp;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
+  public static isAuthenticated(): boolean {
+    const token = this.getAdminToken();
+    if (!token) return false;
+    if (this.isTokenExpired(token)) return false;
+    return true;
+  }
+
+  public static saveAdminSession({
+    accessToken,
+    refreshToken,
+    user,
+    rememberMe,
+    email,
+  }: {
+    accessToken: string;
+    refreshToken?: string;
+    user?: any;
+    rememberMe: boolean;
+    email?: string;
+  }) {
+    if (typeof window === 'undefined') return;
+
+    if (rememberMe) {
+      // 1. Persistent storage
+      localStorage.setItem(ADMIN_TOKEN_KEY, accessToken);
+      if (refreshToken) localStorage.setItem(ADMIN_REFRESH_TOKEN_KEY, refreshToken);
+      if (user) localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(user));
+      localStorage.setItem(REMEMBER_ME_KEY, 'true');
+      if (email) {
+        localStorage.setItem(SAVED_EMAIL_KEY, email);
+        localStorage.setItem('btt_saved_email', email);
+      }
+
+      // 2. Persistent 30-day cookies (30 days = 2592000s)
+      this.setCookie(ADMIN_TOKEN_KEY, accessToken, 30);
+      if (refreshToken) this.setCookie(ADMIN_REFRESH_TOKEN_KEY, refreshToken, 30);
+
+      // Clean temporary session storage
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+      sessionStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
+      sessionStorage.removeItem(ADMIN_USER_KEY);
+    } else {
+      // 1. Session-only storage (automatically expires when browser/tab is closed)
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, accessToken);
+      if (refreshToken) sessionStorage.setItem(ADMIN_REFRESH_TOKEN_KEY, refreshToken);
+      if (user) sessionStorage.setItem(ADMIN_USER_KEY, JSON.stringify(user));
+
+      // 2. Session cookie (no max-age/expires => cleared when browser is closed)
+      this.setCookie(ADMIN_TOKEN_KEY, accessToken);
+      if (refreshToken) this.setCookie(ADMIN_REFRESH_TOKEN_KEY, refreshToken);
+
+      // Clean persistent auth credentials
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_USER_KEY);
+      localStorage.removeItem(REMEMBER_ME_KEY);
+      localStorage.removeItem(SAVED_EMAIL_KEY);
+      localStorage.removeItem('btt_saved_email');
+    }
+  }
+
+  public static clearAdminSession() {
+    if (typeof window === 'undefined') return;
+    sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    sessionStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
+    sessionStorage.removeItem(ADMIN_USER_KEY);
+
+    localStorage.removeItem(ADMIN_TOKEN_KEY);
+    localStorage.removeItem(ADMIN_REFRESH_TOKEN_KEY);
+    localStorage.removeItem(ADMIN_USER_KEY);
+    localStorage.removeItem(REMEMBER_ME_KEY);
+
+    this.deleteCookie(ADMIN_TOKEN_KEY);
+    this.deleteCookie(ADMIN_REFRESH_TOKEN_KEY);
+  }
+
+  public static logout() {
+    this.clearAdminSession();
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  }
+
+  public static handleSessionExpired() {
+    this.clearAdminSession();
+    if (typeof window !== 'undefined') {
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && !currentPath.startsWith('/driver')) {
+        window.location.href = '/login?expired=1';
+      }
+    }
+  }
+
+  public static async trySilentRefresh(): Promise<boolean> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) return false;
+
+    if (this.isRefreshing && this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/auth/refresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.accessToken) {
+            this.saveAdminSession({
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken || refreshToken,
+              user: data.user || this.getAdminUser(),
+              rememberMe: this.isRememberMe(),
+            });
+            return true;
+          }
+        }
+      } catch {
+        // fail silently
+      } finally {
+        this.isRefreshing = false;
+        this.refreshPromise = null;
+      }
+      return false;
+    })();
+
+    return this.refreshPromise;
+  }
+
+  // Extend active session while admin is actively working
+  public static async keepSessionAlive(): Promise<void> {
+    if (typeof window === 'undefined') return;
+    const token = this.getAdminToken();
+    if (!token) return;
+
+    // Renew persistent cookie expiry if remember me is active
+    if (this.isRememberMe()) {
+      this.setCookie(ADMIN_TOKEN_KEY, token, 30);
+      const ref = this.getRefreshToken();
+      if (ref) this.setCookie(ADMIN_REFRESH_TOKEN_KEY, ref, 30);
+    }
+
+    // If token has less than 10 minutes left, try silent refresh
+    const parts = token.split('.');
+    if (parts.length === 3) {
+      try {
+        const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+        if (payload?.exp && Date.now() / 1000 + 600 >= payload.exp) {
+          await this.trySilentRefresh();
+        }
+      } catch {
+        // ignore
+      }
+    }
   }
 
   private static getDriverToken(): string | null {
@@ -33,10 +285,6 @@ export class ApiClient {
     if (effDriverId) {
       headers['x-driver-id'] = effDriverId;
     }
-    // Attach dev fallback key during development when no session token exists
-    if (process.env.NODE_ENV !== 'production' && !token) {
-      headers['x-admin-dev-key'] = 'btt-admin-super-secret-dev';
-    }
 
     const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
@@ -46,6 +294,15 @@ export class ApiClient {
     });
 
     if (!res.ok) {
+      if (res.status === 401 && !isDriver && !endpoint.includes('/auth/login')) {
+        const refreshed = await this.trySilentRefresh();
+        if (refreshed) {
+          return this.request<T>(endpoint, options, isDriver, driverId);
+        }
+        this.handleSessionExpired();
+        throw new Error('Session expired. Please log in again.');
+      }
+
       let errorMessage = 'An error occurred';
       try {
         const errorData = await res.json();
@@ -66,24 +323,21 @@ export class ApiClient {
   }
 
   // Auth
-  static async login(email: string, password: string) {
+  static async login(email: string, password: string, rememberMe: boolean = false) {
     const data = await this.request('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
     if (data.accessToken) {
-      localStorage.setItem('btt_admin_token', data.accessToken);
-      localStorage.setItem('btt_admin_user', JSON.stringify(data.user));
+      this.saveAdminSession({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        user: data.user,
+        rememberMe,
+        email,
+      });
     }
     return data;
-  }
-
-  static logout() {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('btt_admin_token');
-      localStorage.removeItem('btt_admin_user');
-      window.location.href = '/login';
-    }
   }
 
   static async getMe() {
