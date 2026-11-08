@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "frontend",
+    "backend"
   ],
   "scripts": {
-    "dev:web": "npm run dev --workspace=@barcelona/web",
-    "dev:api": "npm --workspace=apps/api run start:dev",
-    "build:web": "npm --workspace=apps/web run build",
-    "build:api": "npm --workspace=apps/api run build",
-    "test:api": "npm --workspace=apps/api run test"
+    "dev:frontend": "npm run dev --workspace=@barcelona/frontend",
+    "dev:backend": "npm run start:dev --workspace=@barcelona/backend",
+    "build:frontend": "npm run build --workspace=@barcelona/frontend",
+    "build:backend": "npm run build --workspace=@barcelona/backend",
+    "start:frontend": "npm run start --workspace=@barcelona/frontend",
+    "start:backend": "npm run start --workspace=@barcelona/backend",
+    "test:backend": "npm run test --workspace=@barcelona/backend"
   },
   "devDependencies": {
     "typescript": "^5.4.5"

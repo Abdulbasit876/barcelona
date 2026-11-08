@@ -7,17 +7,22 @@ node_modules/
 .next/
 build/
 out/
-# Note: packages/shared/dist is committed so Vercel can use it
+backend/dist/
+frontend/.next/
+frontend/out/
 apps/api/dist/
 admin/api/dist/
 
-# Environment files (NEVER commit these - add them in Vercel/Render dashboard)
+# Environment files (NEVER commit these - keep server secrets in backend/.env only)
 .env
+.env.*
 .env.local
 .env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env*
+frontend/.env*
 
 # Logs
 *.log
@@ -36,6 +41,5 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Vercel
+# Vercel & Deployment
 .vercel
-
