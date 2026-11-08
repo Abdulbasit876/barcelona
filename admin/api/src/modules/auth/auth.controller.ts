@@ -8,7 +8,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AdminGuard } from '../../common/guards/admin.guard';
-import { CreateAdminDto, LoginDto, ResetPasswordDto } from './auth.dto';
+import { CreateAdminDto, LoginDto, RefreshTokenDto, ResetPasswordDto } from './auth.dto';
 import { AuthService } from './auth.service';
 
 @ApiTags('Admin Auth')
@@ -17,9 +17,21 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Log in as an Administrator' })
+  @ApiOperation({ summary: 'Log in as an Administrator with Supabase Auth' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Post('refresh')
+  @ApiOperation({ summary: 'Refresh authentication token using refresh token' })
+  async refresh(@Body() dto: RefreshTokenDto) {
+    return this.authService.refreshSession(dto.refreshToken);
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: 'Log out administrator session' })
+  async logout(@CurrentUser() user: any) {
+    return this.authService.logout(user);
   }
 
   @Get('me')

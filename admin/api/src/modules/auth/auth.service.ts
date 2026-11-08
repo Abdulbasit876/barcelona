@@ -8,6 +8,8 @@ import {
 import { SupabaseService } from '../../common/services/supabase.service';
 import { CreateAdminDto, LoginDto } from './auth.dto';
 
+const ALLOWED_ADMIN_ROLES = ['SUPER_ADMIN', 'ADMIN', 'DISPATCHER'];
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -16,26 +18,31 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
+    const isProduction = process.env.NODE_ENV === 'production';
 
-    // Check Supabase Auth
+    // 1. Authenticate with Supabase Auth
     try {
       const { data, error } = await this.supabase
         .getClient()
         .auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
 
-      if (error || !data.user) {
-        // Fallback for development if Supabase instance is not yet seeded
+      if (error || !data.user || !data.session) {
+        // Dev fallback in non-production only
         if (
-          process.env.NODE_ENV !== 'production' &&
+          !isProduction &&
           (email === 'admin@barcelonataxitransfer.com' ||
             email === 'bookings.barcelonataxitransfer@gmail.com') &&
           (password === 'admin123456' || password === 'admin')
         ) {
+          this.logger.log(`Development mock login successful for: ${email}`);
           return {
             accessToken: 'dev-admin-master-token',
+            refreshToken: 'dev-admin-refresh-token',
+            expiresIn: 3600,
+            expiresAt: Math.floor(Date.now() / 1000) + 3600,
             user: {
               id: '00000000-0000-0000-0000-000000000001',
               email,
@@ -44,61 +51,178 @@ export class AuthService {
             },
           };
         }
-        throw new UnauthorizedException(error?.message || 'Invalid credentials');
+
+        this.logger.warn(`Supabase sign-in failed for ${email}: ${error?.message}`);
+        throw new UnauthorizedException(error?.message || 'Invalid email or password');
       }
 
-      // Check admin_users table for verification
+      // 2. Strict Role & Authorization Check in admin_users table
       const { data: adminRecord, error: adminError } = await this.supabase
         .getClient()
         .from('admin_users')
         .select('*')
-        .eq('email', email)
-        .eq('is_active', true)
-        .single();
+        .or(`email.eq.${data.user.email},user_id.eq.${data.user.id}`)
+        .maybeSingle();
 
       if (adminError || !adminRecord) {
-        // Auto-seed initial admin for the registered email
+        // Auto-link initial admin if email matches official company domain or seed
         if (email.includes('admin@barcelona') || email.includes('bookings.barcelona')) {
-          await this.supabase
+          const { data: newAdmin } = await this.supabase
             .getClient()
             .from('admin_users')
             .upsert(
               {
                 user_id: data.user.id,
-                email,
+                email: data.user.email,
                 name: 'Administrator',
                 role: 'SUPER_ADMIN',
                 is_active: true,
               },
               { onConflict: 'email' },
-            );
+            )
+            .select()
+            .single();
 
           return {
-            accessToken: data.session?.access_token,
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in,
+            expiresAt: data.session.expires_at,
             user: {
-              id: data.user.id,
+              id: newAdmin?.user_id || data.user.id,
               email: data.user.email,
-              name: 'Administrator',
-              role: 'SUPER_ADMIN',
+              name: newAdmin?.name || 'Administrator',
+              role: newAdmin?.role || 'SUPER_ADMIN',
             },
           };
         }
-        throw new ForbiddenException('User is not authorized for Admin Access');
+
+        this.logger.warn(`User ${email} authenticated in Supabase but not in admin_users`);
+        throw new ForbiddenException('Access denied: You are not authorized for Administrator access');
+      }
+
+      if (!adminRecord.is_active) {
+        this.logger.warn(`Inactive admin user login attempt: ${email}`);
+        throw new ForbiddenException('Access denied: Administrator account has been deactivated');
+      }
+
+      if (!ALLOWED_ADMIN_ROLES.includes(adminRecord.role)) {
+        this.logger.warn(`Unauthorized role for login attempt: ${adminRecord.role} by ${email}`);
+        throw new ForbiddenException('Access denied: Unauthorized administrative role');
+      }
+
+      // Link user_id if not previously set
+      if (!adminRecord.user_id && data.user.id) {
+        await this.supabase
+          .getClient()
+          .from('admin_users')
+          .update({ user_id: data.user.id })
+          .eq('id', adminRecord.id);
       }
 
       return {
-        accessToken: data.session?.access_token,
+        accessToken: data.session.access_token,
+        refreshToken: data.session.refresh_token,
+        expiresIn: data.session.expires_in,
+        expiresAt: data.session.expires_at,
         user: {
-          id: data.user.id,
-          email: data.user.email,
+          id: adminRecord.user_id || data.user.id,
+          email: adminRecord.email,
           name: adminRecord.name,
           role: adminRecord.role,
         },
       };
     } catch (err: any) {
+      if (err instanceof UnauthorizedException || err instanceof ForbiddenException) {
+        throw err;
+      }
       this.logger.error(`Login error: ${err.message}`);
       throw new UnauthorizedException(err.message || 'Invalid email or password');
     }
+  }
+
+  async refreshSession(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (!isProduction && refreshToken.startsWith('dev-admin-')) {
+      return {
+        accessToken: 'dev-admin-master-token',
+        refreshToken: 'dev-admin-refresh-token',
+        expiresIn: 3600,
+        expiresAt: Math.floor(Date.now() / 1000) + 3600,
+        user: {
+          id: '00000000-0000-0000-0000-000000000001',
+          email: 'admin@barcelonataxitransfer.com',
+          name: 'Executive Administrator',
+          role: 'SUPER_ADMIN',
+        },
+      };
+    }
+
+    try {
+      const { data, error } = await this.supabase
+        .getClient()
+        .auth.refreshSession({ refresh_token: refreshToken });
+
+      if (error || !data.session || !data.user) {
+        this.logger.warn(`Token refresh failed: ${error?.message || 'No session'}`);
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+
+      // Verify admin authorization
+      const { data: adminRecord, error: adminError } = await this.supabase
+        .getClient()
+        .from('admin_users')
+        .select('*')
+        .or(`email.eq.${data.user.email},user_id.eq.${data.user.id}`)
+        .maybeSingle();
+
+      if (adminError || !adminRecord) {
+        throw new ForbiddenException('Access denied: User is not an authorized administrator');
+      }
+
+      if (!adminRecord.is_active) {
+        throw new ForbiddenException('Access denied: Administrator account has been deactivated');
+      }
+
+      if (!ALLOWED_ADMIN_ROLES.includes(adminRecord.role)) {
+        throw new ForbiddenException('Access denied: Unauthorized administrative role');
+      }
+
+      return {
+        accessToken: data.session.access_token,
+        refreshToken: data.session.refresh_token,
+        expiresIn: data.session.expires_in,
+        expiresAt: data.session.expires_at,
+        user: {
+          id: adminRecord.user_id || data.user.id,
+          email: adminRecord.email,
+          name: adminRecord.name,
+          role: adminRecord.role,
+        },
+      };
+    } catch (err: any) {
+      if (err instanceof UnauthorizedException || err instanceof ForbiddenException) {
+        throw err;
+      }
+      this.logger.error(`Token refresh error: ${err.message}`);
+      throw new UnauthorizedException(err.message || 'Session refresh failed');
+    }
+  }
+
+  async logout(user?: any) {
+    try {
+      if (user?.id) {
+        // Sign out user session in Supabase if supported
+        await this.supabase.getClient().auth.admin.signOut(user.id).catch(() => {});
+      }
+    } catch {
+      // ignore
+    }
+    return { success: true, message: 'Logged out successfully' };
   }
 
   async getCurrentUser(user: any) {
@@ -108,8 +232,8 @@ export class AuthService {
       .getClient()
       .from('admin_users')
       .select('*')
-      .eq('email', user.email)
-      .single();
+      .or(`email.eq.${user.email},user_id.eq.${user.id}`)
+      .maybeSingle();
 
     return {
       id: user.id,
@@ -125,7 +249,7 @@ export class AuthService {
     try {
       const { error } = await this.supabase
         .getClient()
-        .auth.resetPasswordForEmail(email, {
+        .auth.resetPasswordForEmail(email.trim(), {
           redirectTo: `${process.env.ADMIN_WEB_URL || 'http://localhost:3001'}/reset-password`,
         });
 
@@ -147,7 +271,7 @@ export class AuthService {
       const { data: authData, error: authError } = await this.supabase
         .getClient()
         .auth.admin.createUser({
-          email: dto.email,
+          email: dto.email.trim(),
           password: dto.password,
           email_confirm: true,
           user_metadata: { name: dto.name, role: dto.role },
@@ -161,7 +285,7 @@ export class AuthService {
         .from('admin_users')
         .insert({
           user_id: authData.user?.id,
-          email: dto.email,
+          email: dto.email.trim(),
           name: dto.name,
           role: dto.role,
           phone: dto.phone || null,

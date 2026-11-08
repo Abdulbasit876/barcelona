@@ -1,11 +1,14 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SupabaseService } from '../services/supabase.service';
+
+const ALLOWED_ADMIN_ROLES = ['SUPER_ADMIN', 'ADMIN', 'DISPATCHER'];
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -15,12 +18,12 @@ export class AdminGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
+    const isProduction = process.env.NODE_ENV === 'production';
 
-    // Check for dev bypass header or mock environment in development mode
+    // 1. Check for dev bypass in development ONLY (Strictly disabled in production)
     const devToken = request.headers['x-admin-dev-key'];
     const expectedDevKey = process.env.ADMIN_DEV_KEY || 'btt-admin-super-secret-dev';
-    if (process.env.NODE_ENV !== 'production' && devToken && devToken === expectedDevKey) {
+    if (!isProduction && devToken && devToken === expectedDevKey) {
       request.user = {
         id: '00000000-0000-0000-0000-000000000001',
         email: 'admin@barcelonataxitransfer.com',
@@ -30,6 +33,8 @@ export class AdminGuard implements CanActivate {
       return true;
     }
 
+    // 2. Validate Authorization header
+    const authHeader = request.headers.authorization;
     if (!authHeader) {
       throw new UnauthorizedException('Authorization header missing');
     }
@@ -39,60 +44,67 @@ export class AdminGuard implements CanActivate {
       throw new UnauthorizedException('Bearer token missing');
     }
 
+    // Dev token fallback ONLY in non-production
+    if (!isProduction && token.startsWith('dev-admin-')) {
+      request.user = {
+        id: '00000000-0000-0000-0000-000000000001',
+        email: 'admin@barcelonataxitransfer.com',
+        role: 'SUPER_ADMIN',
+        name: 'Master Administrator',
+      };
+      return true;
+    }
+
+    // 3. Strict Supabase Token Verification
     try {
       const { data: authData, error: authError } = await this.supabase
         .getClient()
         .auth.getUser(token);
 
       if (authError || !authData?.user) {
-        // Fallback for custom JWT or mock token
-        if (token.startsWith('dev-admin-')) {
-          request.user = {
-            id: '00000000-0000-0000-0000-000000000001',
-            email: 'admin@barcelonataxitransfer.com',
-            role: 'SUPER_ADMIN',
-            name: 'Master Administrator',
-          };
-          return true;
-        }
+        this.logger.warn(`Invalid or expired token received: ${authError?.message || 'No user'}`);
         throw new UnauthorizedException('Invalid or expired authentication session');
       }
 
       const user = authData.user;
 
-      // Query admin_users table to verify role
+      // 4. Strict Role & Authorization Check in admin_users table
       const { data: adminRecord, error: adminError } = await this.supabase
         .getClient()
         .from('admin_users')
         .select('*')
-        .eq('email', user.email)
-        .eq('is_active', true)
-        .single();
+        .or(`email.eq.${user.email},user_id.eq.${user.id}`)
+        .maybeSingle();
 
       if (adminError || !adminRecord) {
-        // If first superadmin or bootstrap, check metadata
-        if (user.user_metadata?.role === 'ADMIN' || user.user_metadata?.role === 'SUPER_ADMIN') {
-          request.user = {
-            id: user.id,
-            email: user.email,
-            role: user.user_metadata.role,
-            name: user.user_metadata.name || 'Admin',
-          };
-          return true;
-        }
-        throw new UnauthorizedException('Access denied: User is not an authorized administrator');
+        this.logger.warn(`User ${user.email} not found in admin_users`);
+        throw new ForbiddenException('Access denied: User is not an authorized administrator');
       }
 
+      if (!adminRecord.is_active) {
+        this.logger.warn(`Inactive admin user tried to access API: ${user.email}`);
+        throw new ForbiddenException('Access denied: Administrator account has been deactivated');
+      }
+
+      if (!ALLOWED_ADMIN_ROLES.includes(adminRecord.role)) {
+        this.logger.warn(`Unauthorized role ${adminRecord.role} for user: ${user.email}`);
+        throw new ForbiddenException('Access denied: Unauthorized administrative role');
+      }
+
+      // Attach authorized admin details to request
       request.user = {
-        id: user.id,
-        email: user.email,
+        id: adminRecord.user_id || user.id,
+        email: adminRecord.email || user.email,
         role: adminRecord.role,
         name: adminRecord.name,
       };
 
       return true;
     } catch (err: any) {
-      this.logger.error(`Admin authentication failed: ${err.message}`);
+      if (err instanceof UnauthorizedException || err instanceof ForbiddenException) {
+        throw err;
+      }
+      this.logger.error(`Admin authentication error: ${err.message}`);
       throw new UnauthorizedException(err.message || 'Authentication error');
     }
   }

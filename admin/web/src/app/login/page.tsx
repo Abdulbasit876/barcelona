@@ -3,15 +3,16 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { ApiClient } from '@/lib/api';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LogIn, Mail, Lock, AlertCircle, Clock } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, Clock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isExpired = searchParams.get('expired') === '1';
 
-  const [email, setEmail] = useState('admin@barcelonataxitransfer.com');
+  const [email, setEmail] = useState('bookings.barcelonataxitransfer@gmail.com');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,10 +40,27 @@ function LoginForm() {
     setError(null);
 
     try {
-      await ApiClient.login(email, password, rememberMe);
+      await ApiClient.login(email.trim(), password, rememberMe);
       router.replace('/');
     } catch (err: any) {
-      setError(err.message || 'Invalid credentials');
+      const msg = err.message || 'Invalid credentials';
+      if (
+        msg.toLowerCase().includes('inactive') ||
+        msg.toLowerCase().includes('not authorized') ||
+        msg.toLowerCase().includes('deactivated')
+      ) {
+        setError(
+          'Access denied: You are not authorized for Administrator access or your account has been deactivated.'
+        );
+      } else if (
+        msg.toLowerCase().includes('invalid') ||
+        msg.toLowerCase().includes('credentials') ||
+        msg.toLowerCase().includes('password')
+      ) {
+        setError('Invalid email or password. Please verify your credentials and try again.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -53,7 +71,7 @@ function LoginForm() {
     setLoading(true);
     setError(null);
     try {
-      await ApiClient.resetPassword(email);
+      await ApiClient.resetPassword(email.trim());
       setResetSent(true);
     } catch {
       setResetSent(true);
@@ -84,15 +102,20 @@ function LoginForm() {
 
       {/* Login Card */}
       <div className="bg-white border border-slate-200/90 rounded-2xl shadow-xl overflow-hidden">
-        <div className="px-6 pt-6 pb-3 border-b border-slate-100">
-          <h2 className="text-base font-bold text-slate-900">
-            {resetMode ? 'Reset Password' : 'Secure Administrator Login'}
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {resetMode
-              ? 'Enter your email to receive a password reset link'
-              : 'Access restricted to authorized administrators only'}
-          </p>
+        <div className="px-6 pt-6 pb-3 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">
+              {resetMode ? 'Reset Password' : 'Secure Administrator Login'}
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {resetMode
+                ? 'Enter your email to receive a password reset link'
+                : 'Access restricted to authorized administrators only'}
+            </p>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-navy-50 flex items-center justify-center flex-shrink-0">
+            <ShieldCheck className="w-4 h-4 text-navy-800" />
+          </div>
         </div>
 
         <form
@@ -113,8 +136,8 @@ function LoginForm() {
 
           {error && (
             <div className="flex items-start gap-2 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
-              <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
-              {error}
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -137,6 +160,7 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800 transition shadow-sm font-medium"
                 placeholder="admin@barcelonataxitransfer.com"
+                autoComplete="email"
               />
             </div>
           </div>
@@ -149,13 +173,22 @@ function LoginForm() {
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800 transition shadow-sm font-medium"
+                  className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-navy-800 focus:ring-1 focus:ring-navy-800 transition shadow-sm font-medium"
                   placeholder="••••••••••••"
+                  autoComplete="current-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition p-1"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
           )}
@@ -179,11 +212,11 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-extrabold text-sm shadow-md transition disabled:opacity-60 mt-2"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-extrabold text-sm shadow-md transition disabled:opacity-60 mt-2 cursor-pointer"
           >
             {loading ? (
               <span className="animate-pulse">
-                {resetMode ? 'Sending...' : 'Authenticating...'}
+                {resetMode ? 'Sending Link...' : 'Verifying with Supabase...'}
               </span>
             ) : (
               <>
@@ -216,7 +249,7 @@ function LoginForm() {
 
         <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-center">
           <p className="text-[11px] text-slate-500 font-medium">
-            Protected by Supabase Auth + Role-Based Access Control
+            Protected by Supabase Auth + Strict Role-Based Access Control
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { SidebarProvider } from '@/components/layout/SidebarContext';
 import { ApiClient } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 
 function AuthLoadingScreen({ message }: { message?: string }) {
   return (
@@ -78,6 +79,33 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  // Supabase Auth State Change Listener (Automatic Token Refresh & Sign Out handling)
+  useEffect(() => {
+    if (isDriverRoute) return;
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        ApiClient.clearAdminSession();
+        if (!isLoginPage) {
+          router.replace('/login');
+        }
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        ApiClient.saveAdminSession({
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          user: ApiClient.getAdminUser(),
+          rememberMe: ApiClient.isRememberMe(),
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [isDriverRoute, isLoginPage, router]);
 
   // Activity tracker & Silent token keeper while working
   useEffect(() => {

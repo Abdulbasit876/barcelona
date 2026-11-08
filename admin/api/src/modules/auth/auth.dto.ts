@@ -13,6 +13,13 @@ export class LoginDto {
   password!: string;
 }
 
+export class RefreshTokenDto {
+  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...', description: 'Supabase refresh token' })
+  @IsString()
+  @IsNotEmpty()
+  refreshToken!: string;
+}
+
 export class ResetPasswordDto {
   @ApiProperty({ example: 'admin@barcelonataxitransfer.com' })
   @IsEmail()
