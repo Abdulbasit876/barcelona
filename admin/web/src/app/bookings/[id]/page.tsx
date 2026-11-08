@@ -156,7 +156,7 @@ export default function BookingDetailPage() {
         ).toLocaleString('en-GB')}`}
       />
 
-      <div className="p-6 space-y-6 max-w-6xl">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-6xl">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between">
           <Link
@@ -190,7 +190,7 @@ export default function BookingDetailPage() {
         </div>
 
         {/* Top Highlight Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Ride Status

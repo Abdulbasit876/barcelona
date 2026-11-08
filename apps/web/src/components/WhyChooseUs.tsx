@@ -31,7 +31,7 @@ export default function WhyChooseUs({ locale }: { locale: string }) {
   ];
 
   return (
-    <section className="py-20 bg-white border-y border-gray-100">
+    <section className="py-14 sm:py-20 bg-white border-y border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-xs uppercase tracking-widest text-gold-600 font-bold">
@@ -45,7 +45,7 @@ export default function WhyChooseUs({ locale }: { locale: string }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {items.map((item, index) => {
             const Icon = item.icon;
             return (

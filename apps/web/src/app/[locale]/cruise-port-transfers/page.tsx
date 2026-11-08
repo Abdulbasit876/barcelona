@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { Anchor, Clock, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -28,7 +28,7 @@ export default function CruisePortTransfersPage({
         <QuickBookingWidget locale={locale} />
 
         {/* Pricing Notice Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 pt-6 sm:pt-8">
           <div className="navy-card rounded-2xl p-6 space-y-3 border-gold-500/30">
             <span className="text-xs uppercase tracking-wider font-bold text-gold-400">
               Sedan Transfers (1 - 4 Passengers)
@@ -55,7 +55,7 @@ export default function CruisePortTransfersPage({
         </div>
 
         {/* Terminals Info */}
-        <div className="navy-card rounded-2xl p-8 space-y-4">
+        <div className="navy-card rounded-2xl p-5 sm:p-8 space-y-4">
           <h2 className="text-xl font-serif font-bold text-white">
             Cruise Piers & Ships Serviced
           </h2>

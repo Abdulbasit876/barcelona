@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Image from 'next/image';
@@ -30,7 +30,7 @@ export default function AirportTransfersPage({
         <QuickBookingWidget locale={locale} />
 
         {/* Airport Features Detail */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 pt-6 sm:pt-8">
           <div className="navy-card rounded-2xl p-6 space-y-3">
             <div className="w-12 h-12 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-gold-400">
               <Clock className="w-6 h-6" />
@@ -63,7 +63,7 @@ export default function AirportTransfersPage({
         </div>
 
         {/* Terminals Guide */}
-        <div className="navy-card rounded-2xl p-8 space-y-6">
+        <div className="navy-card rounded-2xl p-5 sm:p-8 space-y-6">
           <h2 className="text-2xl font-serif font-bold text-white">
             Barcelona Airport Terminals Served
           </h2>

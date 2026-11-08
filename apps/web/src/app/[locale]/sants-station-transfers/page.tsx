@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { Train, Clock, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -28,7 +28,7 @@ export default function SantsStationTransfersPage({
         <QuickBookingWidget locale={locale} />
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8 pt-6 sm:pt-8">
           <div className="navy-card rounded-2xl p-6 space-y-3 border-gold-500/30">
             <span className="text-xs uppercase tracking-wider font-bold text-gold-400">
               Sedan Transfers (1 - 4 Passengers)

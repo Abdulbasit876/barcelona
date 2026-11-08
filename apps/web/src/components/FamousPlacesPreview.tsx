@@ -12,7 +12,7 @@ export default function FamousPlacesPreview({ locale }: { locale: string }) {
   const places = SEED_FAMOUS_PLACES.slice(0, 4);
 
   return (
-    <section className="py-24 bg-navy-950 relative">
+    <section className="py-16 sm:py-24 bg-navy-950 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-4 md:space-y-0">
           <div>

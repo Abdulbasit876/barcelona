@@ -491,7 +491,7 @@ export default function DriverPortalPage() {
     const isRideAccepted = currentStatus === 'ACCEPTED' || currentStatus === 'ON_ROUTE' || currentStatus === 'IN_PROGRESS' || currentStatus === 'PASSENGER_ON_BOARD' || currentStatus === 'PICKED_RIDE' || currentStatus === 'COMPLETED';
 
     return (
-      <div className="min-h-screen bg-slate-50 pb-12 max-w-lg mx-auto">
+      <div className="min-h-screen bg-slate-50 pb-12 max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-2 sm:px-4">
         {/* Active Chauffeur Info Bar */}
         <div className="bg-slate-900 text-white px-3.5 py-1.5 flex items-center justify-between text-xs sticky top-0 z-30 shadow-md">
           <div className="flex items-center gap-1.5 min-w-0">
@@ -1232,7 +1232,7 @@ export default function DriverPortalPage() {
   const totalCompleted = rides?.stats?.totalCompleted ?? completedList.length;
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-12 max-w-lg mx-auto">
+    <div className="min-h-screen bg-slate-50 pb-12 max-w-lg md:max-w-2xl lg:max-w-4xl mx-auto px-2 sm:px-4">
       {/* Top Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-3.5 sticky top-0 z-20 shadow-sm">
         <div className="flex items-center justify-between">

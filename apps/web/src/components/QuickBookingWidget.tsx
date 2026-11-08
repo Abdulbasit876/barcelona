@@ -56,7 +56,7 @@ export default function QuickBookingWidget({ locale }: { locale: string }) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-navy-900/90 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-20">
+    <div className="w-full max-w-4xl mx-auto bg-navy-900/90 backdrop-blur-xl border border-gold-500/30 rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl relative z-20">
       <div className="flex items-center justify-between mb-6 border-b border-navy-800 pb-4">
         <div>
           <h3 className="text-xl sm:text-2xl font-serif font-bold text-white flex items-center">
@@ -127,7 +127,7 @@ export default function QuickBookingWidget({ locale }: { locale: string }) {
           <label className="block text-xs font-semibold uppercase tracking-wider text-gold-400 mb-2">
             Pickup Time Option
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setBookingMode('now')}

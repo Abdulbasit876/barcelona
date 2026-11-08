@@ -88,9 +88,9 @@ export default function DashboardPage() {
         onNewBookingClick={() => setShowCreateBooking(true)}
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-5 sm:space-y-6">
         {/* KPI Cards Row 1 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatCard
             title="Total Bookings"
             value={loading ? '—' : overview?.totalBookings ?? 0}
@@ -101,7 +101,7 @@ export default function DashboardPage() {
           <StatCard
             title="Today's Bookings"
             value={loading ? '—' : overview?.todayBookings ?? 0}
-            subtitle={`Active operational day — ${new Date().toLocaleDateString()}`}
+            subtitle={`Active day — ${new Date().toLocaleDateString()}`}
             icon={Clock}
             colorScheme="sky"
           />
@@ -122,7 +122,7 @@ export default function DashboardPage() {
         </div>
 
         {/* KPI Cards Row 2 — Financial */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatCard
             title="Gross Booking Value"
             value={loading ? '—' : `€${Number(overview?.grossBookingValue ?? 0).toLocaleString('en-GB', { minimumFractionDigits: 2 })}`}
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Ride Status Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatCard
             title="Confirmed"
             value={loading ? '—' : overview?.confirmedBookings ?? 0}
@@ -186,13 +186,13 @@ export default function DashboardPage() {
         </div>
 
         {/* Revenue Chart + Category Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
           <div className="lg:col-span-2">
             <RevenueChart data={trends} />
           </div>
 
           {/* Category Distribution */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-sm">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
               <Car className="w-4 h-4 text-amber-600" />
               <h3 className="text-sm font-extrabold text-slate-900">Vehicle Category Mix</h3>
@@ -208,7 +208,7 @@ export default function DashboardPage() {
                   const pct = catTotal > 0 ? Math.round((cat.count / catTotal) * 100) : 0;
                   return (
                     <div key={cat.category}>
-                      <div className="flex items-center justify-between text-xs mb-1.5">
+                      <div className="flex items-center justify-between text-xs mb-1.5 flex-wrap gap-1">
                         <span className="font-bold text-slate-800">
                           {cat.category}
                         </span>
@@ -234,7 +234,7 @@ export default function DashboardPage() {
 
         {/* Recent Bookings Table */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CalendarCheck className="w-4 h-4 text-amber-600" />
               <h3 className="text-sm font-extrabold text-slate-900">Recent Bookings</h3>
@@ -248,11 +248,11 @@ export default function DashboardPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-xs min-w-[680px]">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/80">
                   {['Reference', 'Customer', 'Transfer / Vehicle', 'Pickup Date', 'Fare', 'Status', 'Action'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    <th key={h} className="text-left px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -277,20 +277,20 @@ export default function DashboardPage() {
                       key={b.id}
                       className="border-b border-slate-100 hover:bg-slate-50/70 transition"
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <span className="font-mono font-bold text-slate-900 text-[11px] bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
                           {b.booking_reference}
                         </span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="font-bold text-slate-900">{b.customer_name}</div>
-                        <div className="text-slate-500 text-[10px]">{b.customer_email}</div>
+                        <div className="text-slate-500 text-[10px] truncate max-w-[140px]">{b.customer_email}</div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-800">{b.transfer_type}</div>
                         <div className="text-slate-500 text-[10px]">{b.vehicle_category}</div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600 font-medium">
+                      <td className="px-4 py-3 text-slate-600 font-medium whitespace-nowrap">
                         {b.pickup_datetime
                           ? new Date(b.pickup_datetime).toLocaleDateString('en-GB', {
                               day: '2-digit',
@@ -301,7 +301,7 @@ export default function DashboardPage() {
                             })
                           : '—'}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <span className="font-extrabold text-slate-900">
                           €{Number(b.total_fare || 0).toFixed(2)}
                         </span>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                             statusColorMap[b.status] || 'bg-slate-100 text-slate-600 border-slate-200'
@@ -320,7 +320,7 @@ export default function DashboardPage() {
                           {b.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <Link
                           href={`/bookings/${b.id}`}
                           className="text-navy-800 hover:text-amber-600 font-bold transition"

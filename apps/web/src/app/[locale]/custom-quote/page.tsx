@@ -91,7 +91,7 @@ export default function CustomQuotePage({
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="navy-card rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+          <form onSubmit={handleSubmit} className="navy-card rounded-2xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 shadow-2xl">
             {error && (
               <div className="p-4 rounded-xl bg-red-950/80 border border-red-500/30 text-red-200 text-xs">
                 {error}

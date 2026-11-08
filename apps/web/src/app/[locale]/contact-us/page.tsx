@@ -68,7 +68,7 @@ export default function ContactUsPage({
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Info Card */}
-          <div className="navy-card rounded-2xl p-6 sm:p-8 space-y-6 lg:col-span-1">
+          <div className="navy-card rounded-2xl p-5 sm:p-6 lg:p-8 space-y-6 lg:col-span-1">
             <h3 className="text-xl font-serif font-bold text-white">
               Get In Touch
             </h3>
@@ -120,7 +120,7 @@ export default function ContactUsPage({
           </div>
 
           {/* Form */}
-          <div className="navy-card rounded-2xl p-6 sm:p-8 lg:col-span-2">
+          <div className="navy-card rounded-2xl p-5 sm:p-6 lg:p-8 lg:col-span-2">
             {submitted ? (
               <div className="text-center py-12 space-y-4">
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 border-2 border-emerald-400 flex items-center justify-center mx-auto text-emerald-400">

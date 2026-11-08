@@ -60,7 +60,7 @@ function DriverModal({ title, form, setForm, onSubmit, onClose, saving }: Driver
         </div>
 
         <form onSubmit={onSubmit} className="p-5 space-y-4 overflow-y-auto max-h-[75vh]">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="col-span-2">
               <label className="text-xs font-bold text-slate-700 block mb-1">Full Name *</label>
               <input
@@ -255,9 +255,9 @@ export default function DriversPage() {
         subtitle={`${drivers.length} registered drivers · Manage profiles, vehicles & category assignments`}
       />
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Fleet KPI Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm flex items-center justify-between">
             <div>
               <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Drivers</div>

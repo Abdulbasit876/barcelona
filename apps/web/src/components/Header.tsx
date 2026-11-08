@@ -153,7 +153,7 @@ export default function Header({ locale }: { locale: string }) {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="absolute top-full left-4 right-4 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+          <div className="absolute top-full left-3 right-3 sm:left-4 sm:right-4 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden max-h-[85vh] overflow-y-auto">
             <nav className="flex flex-col p-3 space-y-1">
               {navLinks.map((link) => (
                 <Link
@@ -165,12 +165,12 @@ export default function Header({ locale }: { locale: string }) {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex items-center space-x-2 px-2 pt-2 pb-1 border-t border-gray-100">
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5 px-2 pt-2 pb-1 border-t border-gray-100">
                 {locales.map((loc) => (
                   <button
                     key={loc}
                     onClick={() => { switchLanguage(loc); setMobileMenuOpen(false); }}
-                    className={`flex-1 text-center py-2 rounded-xl text-[11px] font-bold transition-all ${
+                    className={`text-center py-2 rounded-xl text-[11px] font-bold transition-all ${
                       locale === loc ? 'bg-navy-950 text-white' : 'bg-gray-100 text-navy-700'
                     }`}
                   >

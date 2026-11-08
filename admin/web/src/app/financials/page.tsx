@@ -50,9 +50,9 @@ export default function FinancialsPage() {
     <>
       <Header title="Financial Analytics" subtitle="Revenue breakdown, category performance, and driver earnings" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* KPI Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {loading
             ? [...Array(4)].map((_, i) => (
                 <div key={i} className="h-24 bg-white border border-slate-200 rounded-2xl animate-pulse" />

@@ -11,7 +11,7 @@ export default function WhatsAppButton() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-3">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end space-y-3">
       {/* Contact options popup */}
       {open && (
         <div className="mb-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden w-64 animate-in fade-in slide-in-from-bottom-4 duration-200">

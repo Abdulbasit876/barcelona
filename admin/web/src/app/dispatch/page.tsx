@@ -212,10 +212,10 @@ export default function DispatchPage() {
         subtitle="Real-time ride assignment, auto-dispatch, and driver schedule management"
       />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
         {/* Summary Strip */}
         {board && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
               { label: 'Unassigned', count: board.unassignedCount, color: 'text-amber-800 bg-amber-50 border-amber-200' },
               { label: 'Assigned / Ready', count: board.assignedCount, color: 'text-sky-800 bg-sky-50 border-sky-200' },

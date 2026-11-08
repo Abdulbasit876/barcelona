@@ -311,7 +311,7 @@ export default function ManageBookingPage({
         {booking && (
           <div className="space-y-6">
             {/* Overview Status Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <div className="navy-card rounded-2xl p-5">
                 <span className="text-[11px] text-ice-400 uppercase font-semibold">
                   Booking Reference

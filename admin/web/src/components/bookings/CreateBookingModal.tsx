@@ -69,36 +69,37 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-4 sm:my-8 animate-in fade-in zoom-in-95">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-navy-800 text-white flex items-center justify-center font-bold text-sm">
+            <div className="w-8 h-8 rounded-lg bg-navy-800 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
               +
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-slate-900">Create Booking Manually</h2>
-              <p className="text-xs text-slate-500 font-medium">Dispatch on behalf of customer with live deposit calculation</p>
+              <h2 className="text-sm sm:text-base font-extrabold text-slate-900">Create Booking Manually</h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-medium">Dispatch on behalf of customer with live deposit calculation</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+          <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           {/* Transfer & Vehicle Type */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">
                 Transfer Type
@@ -142,7 +143,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-amber-600" />
+                <MapPin className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
                 Pickup Location
               </label>
               <input
@@ -156,7 +157,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
 
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                 Destination Address
               </label>
               <input
@@ -170,10 +171,10 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
           </div>
 
           {/* Date & Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                <Calendar className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
                 Pickup Date
               </label>
               <input
@@ -197,7 +198,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
           </div>
 
           {/* Customer Info */}
-          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+          <div className="p-3.5 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
             <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-amber-600" />
               Customer Details
@@ -240,7 +241,7 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
           </div>
 
           {/* Capacity & Extras */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1">Passengers</label>
               <input
@@ -284,8 +285,8 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
           </div>
 
           {/* Pricing & Deposit Engine Preview */}
-          <div className="p-4 bg-amber-50/70 text-slate-900 rounded-2xl border border-amber-200">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2 flex items-center justify-between">
+          <div className="p-3.5 sm:p-4 bg-amber-50/70 text-slate-900 rounded-2xl border border-amber-200">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2 flex items-center justify-between flex-wrap gap-1">
               <span className="flex items-center gap-1.5">
                 <DollarSign className="w-4 h-4 text-amber-600" />
                 Fare & Deposit Breakdown
@@ -295,22 +296,22 @@ export function CreateBookingModal({ isOpen, onClose, onCreated }: CreateBooking
               </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 text-center py-2 bg-white rounded-xl border border-amber-200/80 shadow-sm">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 text-center py-2 bg-white rounded-xl border border-amber-200/80 shadow-sm">
+              <div className="p-1">
                 <div className="text-[10px] text-slate-500 uppercase font-bold">Total Fare</div>
                 <div className="text-base font-black text-slate-900">€{Number(form.totalFare).toFixed(2)}</div>
               </div>
-              <div className="border-x border-slate-100">
+              <div className="p-1 sm:border-x border-slate-100">
                 <div className="text-[10px] text-emerald-700 uppercase font-bold">Online Deposit ({form.depositPercentage}%)</div>
                 <div className="text-base font-black text-emerald-700">€{depositAmount.toFixed(2)}</div>
               </div>
-              <div>
+              <div className="p-1">
                 <div className="text-[10px] text-amber-800 uppercase font-bold">Driver Balance</div>
                 <div className="text-base font-black text-amber-800">€{remainingBalance.toFixed(2)}</div>
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">Total Fare (€)</label>
                 <input

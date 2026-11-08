@@ -347,7 +347,7 @@ export default function BookTransferPage({
   // Card container style adhering strictly to Requirement 12:
   // Ultra-light sky blue (#F4FBFF), dark navy text (#0F2346), soft blue borders (#CFE7F5)
   const cardContainerClass =
-    'bg-[#F4FBFF] text-[#0F2346] rounded-2xl p-6 sm:p-8 space-y-6 border border-[#CFE7F5] shadow-2xl';
+    'bg-[#F4FBFF] text-[#0F2346] rounded-2xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 border border-[#CFE7F5] shadow-2xl';
 
   return (
     <div className="pt-28 pb-20 bg-navy-950 min-h-screen">
@@ -362,11 +362,11 @@ export default function BookTransferPage({
           </h1>
 
           {/* Stepper Dots */}
-          <div className="flex items-center justify-center space-x-2 sm:space-x-4 mt-6">
+          <div className="flex items-center justify-center space-x-1 sm:space-x-2 mt-6">
             {[1, 2, 3, 4, 5].map((s) => (
               <div key={s} className="flex items-center">
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all ${
                     step === s
                       ? 'bg-gold-500 text-navy-950 shadow-gold ring-4 ring-gold-500/20'
                       : step > s
@@ -378,7 +378,7 @@ export default function BookTransferPage({
                 </div>
                 {s < 5 && (
                   <div
-                    className={`w-6 sm:w-12 h-0.5 mx-1 transition-colors ${
+                    className={`w-3 sm:w-10 h-0.5 mx-0.5 sm:mx-1 transition-colors ${
                       step > s ? 'bg-gold-500/60' : 'bg-navy-800'
                     }`}
                   />
@@ -798,7 +798,7 @@ export default function BookTransferPage({
               />
             </div>
 
-            <div className="pt-4 flex items-center justify-between">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setStep(1)}
@@ -888,7 +888,7 @@ export default function BookTransferPage({
               ))}
             </div>
 
-            <div className="pt-4 flex items-center justify-between">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setStep(2)}
@@ -1008,7 +1008,7 @@ export default function BookTransferPage({
               </div>
             )}
 
-            <div className="pt-4 flex items-center justify-between">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setStep(3)}
@@ -1035,7 +1035,7 @@ export default function BookTransferPage({
         {/* ======================================================== */}
         {step === 5 && (
           <form onSubmit={handleFinalSubmit} className={cardContainerClass}>
-            <div className="border-b border-[#CFE7F5] pb-4 flex items-center justify-between">
+            <div className="border-b border-[#CFE7F5] pb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <span className="text-xs font-bold text-gold-600 uppercase tracking-widest block mb-1">
                   Final Step 5

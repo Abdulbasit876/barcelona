@@ -162,7 +162,7 @@ export default function Footer({ locale }: { locale: string }) {
       <div className="bg-navy-950 py-4 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-ice-300 space-y-2 sm:space-y-0">
           <p>© {new Date().getFullYear()} Barcelona Taxi Transfer. {t('rights')}</p>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
             <Link href="/privacy-policy" className="hover:text-gold-400 transition-colors">{t('privacy')}</Link>
             <span className="text-navy-700">•</span>
             <Link href="/terms-and-conditions" className="hover:text-gold-400 transition-colors">{t('terms')}</Link>

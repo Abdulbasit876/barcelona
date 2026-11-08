@@ -88,7 +88,7 @@ export default function ApprovalsPage() {
         subtitle={`${bookings.length} booking(s) awaiting review — Cruise Port & Sants Station require manual approval`}
       />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-5">
         {/* Info Banner */}
         <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs shadow-sm">
           <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -172,7 +172,7 @@ export default function ApprovalsPage() {
                 </div>
 
                 {/* Details */}
-                <div className="px-5 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                <div className="px-5 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs">
                   <div>
                     <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Customer</div>
                     <div className="font-bold text-slate-900 text-sm">{b.customer_name}</div>
