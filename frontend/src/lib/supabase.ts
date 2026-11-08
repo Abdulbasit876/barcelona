@@ -1,11 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ognvbtzvblxgjimpecsx.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_p8QJkLY_mxv5Tj-6yqzu6Q_vJzTIcyu';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ognvbtzvblxgjimpecsx.supabase.co';
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_p8QJkLY_mxv5Tj-6yqzu6Q_vJzTIcyu';
 
-export const supabase = createClient(supabaseUrl, supabaseKey, {
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: false,
-    autoRefreshToken: false,
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: 'btt_supabase_auth',
   },
 });

@@ -1,4 +1,7 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api/v1';
+import { supabase } from './supabase';
+
+const rawBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const API_BASE = rawBase.endsWith('/api/v1') ? rawBase : `${rawBase.replace(/\/+$/, '')}/api/v1`;
 
 const ADMIN_TOKEN_KEY = 'btt_admin_token';
 const ADMIN_REFRESH_TOKEN_KEY = 'btt_admin_refresh_token';
@@ -157,6 +160,14 @@ export class ApiClient {
       localStorage.removeItem(SAVED_EMAIL_KEY);
       localStorage.removeItem('btt_saved_email');
     }
+
+    // Sync Supabase Client Session
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      }).catch(() => {});
+    }
   }
 
   public static clearAdminSession() {
@@ -172,9 +183,25 @@ export class ApiClient {
 
     this.deleteCookie(ADMIN_TOKEN_KEY);
     this.deleteCookie(ADMIN_REFRESH_TOKEN_KEY);
+
+    supabase.auth.signOut().catch(() => {});
   }
 
-  public static logout() {
+  public static async logout() {
+    try {
+      const token = this.getAdminToken();
+      if (token) {
+        await fetch(`${API_BASE}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }).catch(() => {});
+      }
+    } catch {
+      // ignore
+    }
     this.clearAdminSession();
     if (typeof window !== 'undefined') {
       window.location.href = '/admin/login';
