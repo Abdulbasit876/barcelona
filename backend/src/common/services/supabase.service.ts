@@ -9,11 +9,15 @@ export class SupabaseService {
 
   constructor(private configService: ConfigService) {
     const supabaseUrl =
-      this.configService.get<string>('SUPABASE_URL') || 'https://placeholder.supabase.co';
+      this.configService.get<string>('SUPABASE_URL') ||
+      process.env.SUPABASE_URL ||
+      'https://ognvbtzvblxgjimpecsx.supabase.co';
     const supabaseKey =
       this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') ||
       this.configService.get<string>('SUPABASE_ANON_KEY') ||
-      'placeholder-key';
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_ANON_KEY ||
+      'sb_publishable_p8QJkLY_mxv5Tj-6yqzu6Q_vJzTIcyu';
 
     this.client = createClient(supabaseUrl, supabaseKey, {
       auth: {
@@ -29,4 +33,3 @@ export class SupabaseService {
     return this.client;
   }
 }
-

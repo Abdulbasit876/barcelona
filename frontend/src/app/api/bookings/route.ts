@@ -243,12 +243,38 @@ export async function POST(request: NextRequest) {
     } catch {}
 
     const cabinLuggageCount = Number(body.cabinLuggage || body.cabin_luggage || 0);
+    const vehicleCategory = body.vehicleCategory || 'STANDARD';
+    const nowIso = new Date().toISOString();
+
+    // Find active drivers eligible for this vehicle category directly from Supabase
+    let initialOffers: any[] = [];
+    try {
+      const { data: activeDrivers } = await supabase
+        .from('drivers')
+        .select('id, name, assigned_categories')
+        .eq('is_active', true);
+
+      const matching = (activeDrivers || []).filter((d: any) => {
+        const cats = Array.isArray(d.assigned_categories) ? d.assigned_categories : [];
+        return cats.includes(vehicleCategory) || cats.length === 0;
+      });
+
+      const targetDrivers = matching.length > 0 ? matching : (activeDrivers || []);
+      initialOffers = targetDrivers.map((d: any) => ({
+        driver_id: d.id,
+        driver_name: d.name,
+        status: 'PENDING',
+        offered_at: nowIso,
+      }));
+    } catch (dErr) {
+      console.warn('Could not pre-fetch drivers for offers:', dErr);
+    }
 
     const bookingRow: Record<string, any> = {
       booking_reference: bookingReference,
       access_token: accessToken,
       transfer_type: body.transferType || 'AIRPORT',
-      vehicle_category: body.vehicleCategory || 'STANDARD',
+      vehicle_category: vehicleCategory,
       status: isPendingApproval ? 'PENDING_APPROVAL' : 'CONFIRMED',
       approval_status: isPendingApproval ? 'PENDING_APPROVAL' : 'APPROVED',
       payment_status: body.paymentStatus || (remainingBalance > 0 ? 'PENDING' : 'PAID'),
@@ -281,6 +307,13 @@ export async function POST(request: NextRequest) {
       remaining_balance: remainingBalance,
       deposit_paid: true,
       balance_paid: false,
+      fare_breakdown: {
+        totalFare,
+        depositAmount,
+        remainingBalance,
+        pending_offers: initialOffers,
+        broadcast_at: nowIso,
+      },
     };
 
     const { data: createdBooking, error: bookingError } = await supabase
@@ -292,6 +325,19 @@ export async function POST(request: NextRequest) {
     if (bookingError) {
       console.error('Error inserting booking to Supabase:', bookingError);
       return NextResponse.json({ error: bookingError.message }, { status: 500 });
+    }
+
+    // Insert broadcast offers in dedicated table if available
+    if (initialOffers.length > 0) {
+      try {
+        const offerRows = initialOffers.map((o: any) => ({
+          booking_id: createdBooking.id,
+          driver_id: o.driver_id,
+          status: 'PENDING',
+          offered_at: nowIso,
+        }));
+        await supabase.from('booking_driver_offers').upsert(offerRows, { onConflict: 'booking_id,driver_id' });
+      } catch {}
     }
 
     // Insert alert in notifications table so Admin Dashboard immediately receives notification
@@ -308,9 +354,15 @@ export async function POST(request: NextRequest) {
       console.warn('Could not insert admin notification:', notifErr);
     }
 
-    // Trigger automatic driver assignment immediately via Admin API if configured
+    // Trigger automatic driver assignment via Admin API (local or cloud)
     try {
-      const adminApiUrl = process.env.ADMIN_API_URL || 'http://localhost:4001/api/v1';
+      const rawApiUrl =
+        process.env.ADMIN_API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        'https://barcelona-production.up.railway.app';
+      const cleanUrl = rawApiUrl.replace(/\/+$/, '');
+      const adminApiUrl = cleanUrl.endsWith('/api/v1') ? cleanUrl : `${cleanUrl}/api/v1`;
+
       await fetch(`${adminApiUrl}/dispatch/auto-assign/${createdBooking.id}`, {
         method: 'POST',
         headers: {
