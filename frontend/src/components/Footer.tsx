@@ -159,27 +159,31 @@ export default function Footer({ locale }: { locale: string }) {
       </div>
 
       {/* Bottom bar — navy */}
-      <div className="bg-navy-950 py-4 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-ice-300 space-y-2 sm:space-y-0">
-          <p>© {new Date().getFullYear()} Barcelona Taxi Transfer. {t('rights')}</p>
+      <div className="bg-navy-950 py-4 px-4 sm:px-8 border-t border-navy-900/80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between text-xs text-ice-300 gap-3 sm:gap-4 pr-0 sm:pr-24">
+          <p className="text-center md:text-left">
+            © {new Date().getFullYear()} Barcelona Taxi Transfer. {t('rights')}
+          </p>
+
+          {/* Developer Credit - Centered elegant pill badge, clearly visible and free from WhatsApp overlap */}
+          <div className="flex items-center space-x-1.5 text-xs text-ice-300 bg-navy-900/80 px-3.5 py-1.5 rounded-full border border-navy-800 shadow-sm">
+            <span className="text-ice-400">Developed by</span>
+            <a
+              href="https://softlink.website/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold-400 hover:text-gold-300 font-bold tracking-wide transition-colors underline decoration-gold-400/50 hover:decoration-gold-300 underline-offset-4"
+            >
+              SoftLink
+            </a>
+          </div>
+
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
             <Link href="/privacy-policy" className="hover:text-gold-400 transition-colors">{t('privacy')}</Link>
             <span className="text-navy-700">•</span>
             <Link href="/terms-and-conditions" className="hover:text-gold-400 transition-colors">{t('terms')}</Link>
             <span className="text-navy-700">•</span>
             <Link href="/cancellation-refund-policy" className="hover:text-gold-400 transition-colors">{t('cancellation')}</Link>
-            <span className="text-navy-700">•</span>
-            <span className="text-ice-400">
-              Developed by{' '}
-              <a
-                href="https://softlink.website/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gold-400 hover:text-gold-300 font-semibold transition-colors underline underline-offset-2"
-              >
-                SoftLink
-              </a>
-            </span>
           </div>
         </div>
       </div>
