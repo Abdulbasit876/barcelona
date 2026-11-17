@@ -394,20 +394,29 @@ export default function BookingDetailPage() {
                   </a>
                 </div>
 
-                {(booking.customer_whatsapp || booking.flight_details?.customer_whatsapp) && (
-                  <div>
-                    <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">WhatsApp</div>
-                    <a
-                      href={`https://wa.me/${String(booking.customer_whatsapp || booking.flight_details?.customer_whatsapp).replace(/[^0-9]/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-emerald-700 hover:underline flex items-center gap-1.5 font-bold"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                      {booking.customer_whatsapp || booking.flight_details?.customer_whatsapp}
-                    </a>
-                  </div>
-                )}
+                {(() => {
+                  const waNumber = booking.customer_whatsapp ||
+                    booking.flight_details?.customer_whatsapp ||
+                    booking.special_requests?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1] ||
+                    booking.admin_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1] ||
+                    booking.driver_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1] ||
+                    '';
+                  if (!waNumber) return null;
+                  return (
+                    <div>
+                      <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">WhatsApp</div>
+                      <a
+                        href={`https://wa.me/${String(waNumber).replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 hover:underline flex items-center gap-1.5 font-bold"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        {waNumber}
+                      </a>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 

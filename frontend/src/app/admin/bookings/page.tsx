@@ -20,6 +20,8 @@ import {
   TrendingUp,
   Users,
   AlertTriangle,
+  Phone,
+  MessageCircle,
 } from 'lucide-react';
 
 const TRANSFER_TYPES = ['', 'AIRPORT', 'CRUISE_PORT', 'SANTS_STATION', 'CITY_TRANSFER', 'CITY_TOUR', 'GROUP_TRANSFER', 'CUSTOM_QUOTE'];
@@ -463,7 +465,33 @@ export default function BookingsPage() {
                         <div className="text-slate-500 text-[10px] truncate max-w-[140px]">
                           {b.customer_email}
                         </div>
-                        <div className="text-slate-400 text-[10px]">{b.customer_phone}</div>
+                        <div className="text-slate-500 text-[10px] flex items-center gap-1 mt-0.5">
+                          <Phone className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+                          <a href={`tel:${b.customer_phone}`} className="hover:underline text-slate-600 font-medium">
+                            {b.customer_phone}
+                          </a>
+                        </div>
+                        {(() => {
+                          const wa = b.customer_whatsapp ||
+                            b.flight_details?.customer_whatsapp ||
+                            (b.special_requests?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+                            (b.admin_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]);
+                          if (!wa) return null;
+                          return (
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <MessageCircle className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+                              <a
+                                href={`https://wa.me/${String(wa).replace(/[^0-9]/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-emerald-700 hover:text-emerald-800 text-[10px] font-bold hover:underline"
+                                title="Chat on WhatsApp"
+                              >
+                                {wa}
+                              </a>
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       {/* Transfer Type & Vehicle */}

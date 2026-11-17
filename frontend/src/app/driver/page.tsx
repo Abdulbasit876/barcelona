@@ -428,7 +428,12 @@ export default function DriverPortalPage() {
   if (selectedRide && rideDetails) {
     const rawPhone = rideDetails.customer_phone || rideDetails.customerPhone || '';
     const cleanPhone = cleanPhoneNumber(rawPhone);
-    const rawWhatsapp = rideDetails.customer_whatsapp || rideDetails.customerWhatsapp || rideDetails.flight_details?.customer_whatsapp || '';
+    const rawWhatsapp = rideDetails.customer_whatsapp ||
+      rideDetails.customerWhatsapp ||
+      rideDetails.flight_details?.customer_whatsapp ||
+      (rideDetails.driver_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+      (rideDetails.special_requests?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+      '';
     const cleanWhatsapp = cleanPhoneNumber(rawWhatsapp) || cleanPhone;
     const customerName = rideDetails.customer_name || rideDetails.customerName || 'Customer';
     const customerEmail = rideDetails.customer_email || rideDetails.customerEmail || '';
@@ -1360,7 +1365,12 @@ export default function DriverPortalPage() {
                     const pTime = formatDateTime(ride.pickup_datetime || ride.pickupDateTime);
                     const rawPhone = ride.customer_phone || ride.customerPhone || '';
                     const cleanPhone = cleanPhoneNumber(rawPhone);
-                    const rawWhatsapp = ride.customer_whatsapp || ride.customerWhatsapp || ride.flight_details?.customer_whatsapp || '';
+                    const rawWhatsapp = ride.customer_whatsapp ||
+                      ride.customerWhatsapp ||
+                      ride.flight_details?.customer_whatsapp ||
+                      (ride.driver_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+                      (ride.special_requests?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+                      '';
                     const cleanWhatsapp = cleanPhoneNumber(rawWhatsapp) || cleanPhone;
                     const totalFare = Number(ride.total_fare || ride.totalFare || 0);
                     const balance = Number(ride.remaining_balance ?? ride.remainingBalance ?? 0);

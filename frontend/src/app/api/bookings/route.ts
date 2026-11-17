@@ -318,15 +318,63 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    const { data: createdBooking, error: bookingError } = await supabase
+    let createdBooking: any = null;
+    let bookingError: any = null;
+
+    const res1 = await supabase
       .from('bookings')
       .insert(bookingRow)
       .select()
       .single();
 
-    if (bookingError) {
+    if (res1.error) {
+      // If error is due to missing customer_whatsapp column in Supabase schema cache
+      if (
+        res1.error.message?.includes('customer_whatsapp') ||
+        res1.error.details?.includes('customer_whatsapp') ||
+        res1.error.code === 'PGRST204' ||
+        res1.error.message?.includes('schema cache')
+      ) {
+        console.warn('customer_whatsapp column not found in schema cache. Retrying without column...');
+        const fallbackRow = { ...bookingRow };
+        delete fallbackRow.customer_whatsapp;
+
+        // Ensure customer_whatsapp is safely preserved in notes and flight_details
+        if (body.customerWhatsapp) {
+          const waNote = `[WhatsApp: ${body.customerWhatsapp}]`;
+          fallbackRow.special_requests = fallbackRow.special_requests
+            ? `${fallbackRow.special_requests} ${waNote}`
+            : waNote;
+          fallbackRow.admin_notes = fallbackRow.admin_notes
+            ? `${fallbackRow.admin_notes} | ${waNote}`
+            : waNote;
+          fallbackRow.driver_notes = fallbackRow.driver_notes
+            ? `${fallbackRow.driver_notes} | ${waNote}`
+            : waNote;
+        }
+
+        const res2 = await supabase
+          .from('bookings')
+          .insert(fallbackRow)
+          .select()
+          .single();
+
+        createdBooking = res2.data;
+        bookingError = res2.error;
+      } else {
+        bookingError = res1.error;
+      }
+    } else {
+      createdBooking = res1.data;
+    }
+
+    if (bookingError || !createdBooking) {
       console.error('Error inserting booking to Supabase:', bookingError);
-      return NextResponse.json({ error: bookingError.message }, { status: 500 });
+      return NextResponse.json({ error: bookingError?.message || 'Failed to save booking' }, { status: 500 });
+    }
+
+    if (!createdBooking.customer_whatsapp && body.customerWhatsapp) {
+      createdBooking.customer_whatsapp = body.customerWhatsapp;
     }
 
     // Insert broadcast offers in dedicated table if available
