@@ -104,6 +104,7 @@ export interface CreateBookingDto {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerWhatsapp?: string;
   specialRequests?: string;
   preferredLanguage: Locale;
   tourDurationHours?: number;
@@ -127,6 +128,7 @@ export interface BookingResponse {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerWhatsapp?: string;
   fareBreakdown: PricingBreakdown;
   originalFare?: number;
   revisedFare?: number;
@@ -226,9 +228,9 @@ export const PRICING_CONFIG = {
     HOURLY_RATE: 65.0,
     FREE_WAITING_MINS: 15,
   },
-  // Inside Barcelona city transfers: €20 base for ≤2.5km, then +€3/km
+  // Inside Barcelona city transfers: €25 base for ≤2.5km, then +€3/km
   CITY_TRANSFER: {
-    BASE_FARE: 20.0,
+    BASE_FARE: 25.0,
     BASE_KM_THRESHOLD: 2.5,
     PER_KM_RATE: 3.0,
     FREE_WAITING_MINS: 15,
@@ -258,7 +260,7 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     maxPassengers: 4,
     maxLuggage: 4,
     categorySurcharge: 0,
-    imageUrl: '/cars/economy/33.png',
+    imageUrl: '/cars/economy/11.png',
     features: ['Air Conditioning', 'Clean Modern Interior', 'Complimentary Bottled Water', 'Contactless Payment'],
     description: {
       en: 'Reliable and cost-effective sedan transfers ideal for solo travelers and couples.',
@@ -292,7 +294,7 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     maxPassengers: 4,
     maxLuggage: 3,
     categorySurcharge: 10,
-    imageUrl: '/cars/premium/11.jpg',
+    imageUrl: '/cars/premium/11.png',
     features: ['Luxury Leather Upholstery', 'Wi-Fi Onboard', 'Chilled Refreshments', 'Suit Carrier Space'],
     description: {
       en: 'Executive luxury chauffeur service for business executives and VIP guests.',
@@ -309,7 +311,7 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     maxPassengers: 7,
     maxLuggage: 7,
     categorySurcharge: 15,
-    imageUrl: '/cars/standard-van/11.jpg',
+    imageUrl: '/cars/standard%20van/11.jpg',
     features: ['High Roof & Large Boot', 'Dual Zone Climate', 'Rear Luggage Compartment', 'Child Seats Upon Request'],
     description: {
       en: 'Roomy van perfect for family vacations and travelers with abundant luggage.',
@@ -326,7 +328,7 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     maxPassengers: 8,
     maxLuggage: 8,
     categorySurcharge: 22.5,
-    imageUrl: '/cars/premium-van/11.jpg',
+    imageUrl: '/cars/premium%20van/11.png',
     features: ['Conference Seating', 'Tinted Privacy Windows', 'High-Speed Wi-Fi', 'Bottled Mineral Water'],
     description: {
       en: 'The benchmark of luxury group travel, featuring conference seating and silent cabin.',
@@ -343,7 +345,7 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     maxPassengers: 4,
     maxLuggage: 3,
     categorySurcharge: 12,
-    imageUrl: '/cars/electric/11.jpg',
+    imageUrl: '/cars/electric%20green%20transfer/11.jpg',
     features: ['Zero Emission Travel', 'Panoramic Glass Roof', 'Silent Electric Ride', 'Premium Audio'],
     description: {
       en: 'Zero-emission quiet luxury for environmentally conscious travelers.',
@@ -356,11 +358,11 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
     id: 'veh-large-group',
     category: VehicleCategory.LARGE_GROUP,
     name: 'Large Group Transfers',
-    exampleModels: 'Minibuses · Midibuses · Coaches · Multiple vehicles booked together',
+    exampleModels: 'Multiple vehicles book together',
     maxPassengers: 55,
     maxLuggage: 55,
     categorySurcharge: 0,
-    imageUrl: '/cars/large-group/11.jpg',
+    imageUrl: '/cars/large-group/11.jpeg',
     features: ['PA Audio System', 'Air Suspension', 'Large Cargo Bays', 'Custom Route Itineraries'],
     description: {
       en: 'Custom logistics for tour groups, wedding parties, conferences, and sports teams.',
@@ -373,62 +375,45 @@ export const SEED_VEHICLES: VehicleDefinition[] = [
 
 export const VEHICLE_GALLERY_IMAGES: Record<VehicleCategory, string[]> = {
   [VehicleCategory.ECONOMY]: [
-    '/cars/economy/33.png',
+    '/cars/economy/11.png',
     '/cars/economy/22.jpg',
-    '/cars/economy/11.jpg',
     '/cars/economy/toyota-corolla-black.jpg',
     '/cars/economy/toyota-corolla-black-yellow-doors.jpg',
     '/cars/economy/toyota-prius-plus-black.jpg',
     '/cars/economy/toyota-prius-plus-black-yellow-doors.jpg',
-    '/cars/economy/more-similar-vehicles.jpg',
   ],
   [VehicleCategory.STANDARD]: [
     '/cars/standard/11.jpg',
     '/cars/standard/toyota-camry-black.jpg',
     '/cars/standard/toyota-camry-black-yellow-doors.jpg',
-    '/cars/standard/lexus-es-black.jpg',
-    '/cars/standard/lexus-es-black-yellow-doors.jpg',
-    '/cars/standard/more-similar-vehicles.jpg',
+    '/cars/standard/rav4_black.jpg',
   ],
   [VehicleCategory.PREMIUM]: [
-    '/cars/premium/11.jpg',
-    '/cars/premium/mercedes-benz-e220-black.jpg',
-    '/cars/premium/mercedes-benz-e220-black-yellow-doors.jpg',
+    '/cars/premium/11.png',
     '/cars/premium/lexus-es-high-spec-black.jpg',
-    '/cars/premium/lexus-es-high-spec-black-yellow-doors.jpg',
-    '/cars/premium/more-similar-vehicles.jpg',
+    '/cars/premium/12345.jpg',
+    '/cars/premium/hhgg.png',
   ],
   [VehicleCategory.STANDARD_VAN]: [
-    '/cars/standard-van/11.jpg',
-    '/cars/standard-van/mercedes-benz-vito-tourer-black-16x9.jpg',
-    '/cars/standard-van/mercedes-benz-vito-tourer-black-16x9-yellow-doors.jpg',
-    '/cars/standard-van/volkswagen-caddy-maxi-black-16x9.jpg',
-    '/cars/standard-van/volkswagen-caddy-maxi-black-16x9-yellow-doors.jpg',
-    '/cars/standard-van/more-similar-vehicles.jpg',
+    '/cars/standard%20van/11.jpg',
+    '/cars/standard%20van/mercedes-benz-vito-tourer-black-16x9.jpg',
+    '/cars/standard%20van/volkswagen-caddy-maxi-black-16x9.jpg',
+    '/cars/standard%20van/volkswagen-caddy-maxi-black-16x9-yellow-doors.jpg',
   ],
   [VehicleCategory.PREMIUM_VAN]: [
-    '/cars/premium-van/11.jpg',
-    '/cars/premium-van/mercedes-benz-v-class-black.jpg',
-    '/cars/premium-van/mercedes-benz-v-class-black-yellow-doors.jpg',
-    '/cars/premium-van/ford-tourneo-custom-black.jpg',
-    '/cars/premium-van/ford-tourneo-custom-black-yellow-doors.jpg',
-    '/cars/premium-van/more-similar-vehicles.jpg',
+    '/cars/premium%20van/11.png',
+    '/cars/premium%20van/mercedes-benz-v-class-black.jpg',
+    '/cars/premium%20van/mercedes-benz-v-class-black-yellow-doors.jpg',
+    '/cars/premium%20van/ford-tourneo-custom-black.jpg',
   ],
   [VehicleCategory.ELECTRIC]: [
-    '/cars/electric/11.jpg',
-    '/cars/electric/tesla-model-3-black-16x9.jpg',
-    '/cars/electric/tesla-model-3-black-16x9-yellow-doors.jpg',
-    '/cars/electric/mercedes-benz-eqe-black-16x9.jpg',
-    '/cars/electric/mercedes-benz-eqe-black-16x9-yellow-doors.jpg',
-    '/cars/electric/more-similar-vehicles.jpg',
+    '/cars/electric%20green%20transfer/11.jpg',
+    '/cars/electric%20green%20transfer/tesla-model-3-black-16x9.jpg',
+    '/cars/electric%20green%20transfer/abcd.jpg',
   ],
   [VehicleCategory.LARGE_GROUP]: [
-    '/cars/large-group/11.jpg',
-    '/cars/large-group/minibuses-black-multiple-widescreen-16x9.jpg',
-    '/cars/large-group/minibuses-black-multiple-16x9-yellow-doors.jpg',
-    '/cars/large-group/coaches-black-multiple-16x9.jpg',
-    '/cars/large-group/coaches-black-multiple-16x9-yellow-doors.jpg',
-    '/cars/large-group/more-similar-vehicles.jpg',
+    '/cars/large-group/11.jpeg',
+    '/cars/large-group/WhatsApp%20Image%202026-11-16%20at%2012.59.10%20PM.jpeg',
   ],
 };
 

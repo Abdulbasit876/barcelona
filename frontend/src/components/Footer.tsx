@@ -107,10 +107,10 @@ export default function Footer({ locale }: { locale: string }) {
                 <Phone className="w-4 h-4 text-gold-500 mt-0.5 flex-shrink-0" />
                 <div className="space-y-1">
                   <a href="tel:+34687433263" className="block text-sm text-gray-700 hover:text-gold-600 transition-colors">
-                    +34 687 433 263 (Hamid)
+                    +34 687 433 263
                   </a>
                   <a href="tel:+34602194060" className="block text-sm text-gray-700 hover:text-gold-600 transition-colors">
-                    +34 602 194 060 (Waqas)
+                    +34 602 194 060
                   </a>
                 </div>
               </div>
@@ -168,6 +168,18 @@ export default function Footer({ locale }: { locale: string }) {
             <Link href="/terms-and-conditions" className="hover:text-gold-400 transition-colors">{t('terms')}</Link>
             <span className="text-navy-700">•</span>
             <Link href="/cancellation-refund-policy" className="hover:text-gold-400 transition-colors">{t('cancellation')}</Link>
+            <span className="text-navy-700">•</span>
+            <span className="text-ice-400">
+              Developed by{' '}
+              <a
+                href="https://softlink.website/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-400 hover:text-gold-300 font-semibold transition-colors underline underline-offset-2"
+              >
+                SoftLink
+              </a>
+            </span>
           </div>
         </div>
       </div>

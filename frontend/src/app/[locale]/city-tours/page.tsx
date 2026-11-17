@@ -21,7 +21,7 @@ export default function CityToursPage({
             Barcelona Private City Tours
           </h1>
           <p className="text-sm sm:text-base text-ice-300">
-            Discover the architectural masterworks of Antoni GaudÃ­ and Mediterranean vistas at your own pace with a dedicated English-speaking chauffeur at â‚¬65 per hour.
+            Discover the architectural masterworks of Antoni Gaudí and Mediterranean vistas at your own pace with a dedicated English-speaking chauffeur at €65 per hour.
           </p>
         </div>
 
@@ -31,7 +31,7 @@ export default function CityToursPage({
             <span className="text-xs uppercase tracking-wider font-bold text-gold-400">
               Half-Day Tour (4 Hours)
             </span>
-            <div className="text-2xl font-serif font-bold text-white">â‚¬260.00 EUR</div>
+            <div className="text-2xl font-serif font-bold text-white">€260.00 EUR</div>
             <p className="text-xs sm:text-sm text-ice-300">
               Covers Sagrada FamÃ­lia, Passeig de GrÃ cia (Casa BatllÃ³, La Pedrera), and Park GÃ¼ell with door-to-door VIP pickup.
             </p>
@@ -47,9 +47,9 @@ export default function CityToursPage({
             <span className="text-xs uppercase tracking-wider font-bold text-gold-400">
               Full-Day Tour (8 Hours)
             </span>
-            <div className="text-2xl font-serif font-bold text-white">â‚¬520.00 EUR</div>
+            <div className="text-2xl font-serif font-bold text-white">€520.00 EUR</div>
             <p className="text-xs sm:text-sm text-ice-300">
-              Comprehensive exploration: GaudÃ­ masterpieces, MontjuÃ¯c Castle, Gothic Quarter, Barceloneta promenade, and Tibidabo viewpoint.
+              Comprehensive exploration: Gaudí masterpieces, MontjuÃ¯c Castle, Gothic Quarter, Barceloneta promenade, and Tibidabo viewpoint.
             </p>
             <Link
               href="/book?type=CITY_TOUR&hours=8"

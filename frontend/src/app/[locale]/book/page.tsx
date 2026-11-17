@@ -49,10 +49,10 @@ export default function BookTransferPage({
     (searchParams.get('type') as TransferType) || TransferType.AIRPORT,
   );
   const [pickupAddress, setPickupAddress] = useState(
-    searchParams.get('pickup') || 'Barcelona El Prat Airport (BCN) Terminal 1',
+    searchParams.get('pickup') || '',
   );
   const [destinationAddress, setDestinationAddress] = useState(
-    searchParams.get('destination') || 'Hotel Arts, Carrer de la Marina, 19, 08005 Barcelona',
+    searchParams.get('destination') || '',
   );
   const [pickupDate, setPickupDate] = useState(() => {
     const tm = new Date();
@@ -70,15 +70,28 @@ export default function BookTransferPage({
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('+34 ');
+  const [customerWhatsapp, setCustomerWhatsapp] = useState('');
   const [passengers, setPassengers] = useState(
     parseInt(searchParams.get('passengers') || '2', 10),
   );
+  const [isCustomPassengers, setIsCustomPassengers] = useState(() => {
+    const p = parseInt(searchParams.get('passengers') || '2', 10);
+    return p > 8;
+  });
   const [luggage, setLuggage] = useState(
     parseInt(searchParams.get('luggage') || '2', 10),
   );
+  const [isCustomLuggage, setIsCustomLuggage] = useState(() => {
+    const l = parseInt(searchParams.get('luggage') || '2', 10);
+    return l > 8;
+  });
   const [cabinLuggage, setCabinLuggage] = useState(
     parseInt(searchParams.get('cabinLuggage') || '1', 10),
   );
+  const [isCustomCabinLuggage, setIsCustomCabinLuggage] = useState(() => {
+    const c = parseInt(searchParams.get('cabinLuggage') || '1', 10);
+    return c > 8;
+  });
   const [pickupCoords, setPickupCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [destCoords, setDestCoords] = useState<{ lat: number; lng: number } | null>(null);
   // Optional Baby Seats / Boosters
@@ -93,8 +106,10 @@ export default function BookTransferPage({
   const [cardCvc, setCardCvc] = useState('');
 
   // Selected Vehicle & Fare State
-  const [selectedCategory, setSelectedCategory] = useState<VehicleCategory>(
-    (searchParams.get('vehicle') as VehicleCategory) || VehicleCategory.STANDARD,
+  const vehicleParam = searchParams.get('vehicle');
+  const [hasPreselectedVehicle] = useState<boolean>(Boolean(vehicleParam));
+  const [selectedCategory, setSelectedCategory] = useState<VehicleCategory | null>(
+    (vehicleParam as VehicleCategory) || null,
   );
   const [pricingBreakdown, setPricingBreakdown] = useState<PricingBreakdown | null>(null);
   const [calculatedKm, setCalculatedKm] = useState<number>(18);
@@ -143,7 +158,7 @@ export default function BookTransferPage({
     calculateFare(selectedCategory);
   }, [transferType, selectedCategory, passengers, luggage, babyBoosters, babySeats, destinationAddress, pickupAddress, calculatedKm]);
 
-  const calculateFare = (category: VehicleCategory) => {
+  const calculateFare = (category?: VehicleCategory | null) => {
     const isMetro =
       !destinationAddress.toLowerCase().includes('girona') &&
       !destinationAddress.toLowerCase().includes('tarragona') &&
@@ -168,7 +183,7 @@ export default function BookTransferPage({
     if (transferType === TransferType.AIRPORT) {
       const perKm = isMetro ? 3.0 : 2.5;
       baseFare = Math.max(35, distanceKm * perKm);
-      vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0;
+      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
       pricingRuleApplied = 'Airport Guaranteed Transfer';
     } else if (transferType === TransferType.CRUISE_PORT) {
       requiresAdminApproval = true;
@@ -182,7 +197,7 @@ export default function BookTransferPage({
         pricingRuleApplied = 'Cruise Port Transfer';
       } else {
         baseFare = 42.0;
-        vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0;
+        vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
         pricingRuleApplied = 'Cruise Port Transfer';
       }
     } else if (transferType === TransferType.SANTS_STATION) {
@@ -197,24 +212,24 @@ export default function BookTransferPage({
         pricingRuleApplied = 'Sants Station Transfer';
       } else {
         baseFare = 32.0;
-        vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0;
+        vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
         pricingRuleApplied = 'Sants Station Transfer';
       }
     } else if (transferType === TransferType.CITY_TOUR) {
       baseFare = 3 * 65.0; // 3-hour minimum tour at €65/hr
-      vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0;
+      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
       pricingRuleApplied = 'Barcelona Private Sightseeing Tour (3 hrs)';
     } else {
-      // CITY_TRANSFER: Inside city (Barcelona to Barcelona)
-      // distance <= 2.5 km -> 20 euro
-      // distance > 2.5 km -> 20 euro + 3 euro per km with 20 euro
-      const cityDistanceKm = 8.5; // Typical within-city distance
+      // CITY_TRANSFER: Inside city / distance-based point-to-point transfer
+      // distance <= 2.5 km -> €25
+      // distance > 2.5 km -> €25 + €3 for every additional km
+      const cityDistanceKm = distanceKm;
       if (cityDistanceKm <= 2.5) {
-        baseFare = 20.0;
+        baseFare = 25.0;
       } else {
-        baseFare = 20.0 + (cityDistanceKm - 2.5) * 3.0;
+        baseFare = Math.round((25.0 + (cityDistanceKm - 2.5) * 3.0) * 100) / 100;
       }
-      vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0;
+      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
       pricingRuleApplied = 'Barcelona City Regulated Transfer';
     }
 
@@ -222,7 +237,7 @@ export default function BookTransferPage({
 
     setPricingBreakdown({
       transferType,
-      vehicleCategory: category,
+      vehicleCategory: category || VehicleCategory.STANDARD,
       distanceKm,
       durationHours: 3,
       isMetropolitanArea: isMetro,
@@ -263,6 +278,11 @@ export default function BookTransferPage({
   };
 
   const handleStep3Submit = () => {
+    if (!selectedCategory) {
+      setError('Please select a vehicle category to proceed.');
+      return;
+    }
+    setError(null);
     setStep(4);
   };
 
@@ -286,6 +306,7 @@ export default function BookTransferPage({
         customerName,
         customerEmail,
         customerPhone,
+        customerWhatsapp: customerWhatsapp || null,
         passengers,
         luggage,
         cabinLuggage,
@@ -295,7 +316,7 @@ export default function BookTransferPage({
         dropoffLng: destCoords?.lng || null,
         babyBoosters,
         babySeats,
-        vehicleCategory: selectedCategory,
+        vehicleCategory: selectedCategory || VehicleCategory.STANDARD,
         flightOrTrainNumber,
         cruiseShipName,
         specialRequests,
@@ -336,7 +357,7 @@ export default function BookTransferPage({
       router.push(
         `/${locale}/booking-confirmation/${bookingRef}?token=${accessToken}&email=${encodeURIComponent(
           customerEmail,
-        )}&category=${selectedCategory}&total=${pricingBreakdown?.totalFare || 54}&payment_success=true`,
+        )}&category=${selectedCategory || VehicleCategory.STANDARD}&total=${pricingBreakdown?.totalFare || 54}&payment_success=true`,
       );
     } catch (err: any) {
       setLoading(false);
@@ -647,7 +668,7 @@ export default function BookTransferPage({
               <h3 className="text-lg font-serif font-bold text-[#0F2346]">{t('step2')}</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
                   {t('fullName')} *
@@ -685,21 +706,42 @@ export default function BookTransferPage({
                   required
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  placeholder="+34 600 000 000"
+                  placeholder="+34 602 194 060"
+                  className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-2.5 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 focus:outline-none focus:border-gold-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
+                  WhatsApp Number <span className="text-xs font-normal text-[#0F2346]/60">(Optional)</span>
+                </label>
+                <input
+                  type="tel"
+                  value={customerWhatsapp}
+                  onChange={(e) => setCustomerWhatsapp(e.target.value)}
+                  placeholder="+34 602 194 060"
                   className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-2.5 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 focus:outline-none focus:border-gold-500"
                 />
               </div>
             </div>
 
-            {/* Passenger & Luggage Counts */}
+            {/* Passenger & Luggage Counts with Custom Quantity Option */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
                   {t('passengersCount')}
                 </label>
                 <select
-                  value={passengers}
-                  onChange={(e) => setPassengers(parseInt(e.target.value, 10))}
+                  value={isCustomPassengers ? 'custom' : passengers}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomPassengers(true);
+                      if (passengers <= 8) setPassengers(9);
+                    } else {
+                      setIsCustomPassengers(false);
+                      setPassengers(parseInt(e.target.value, 10));
+                    }
+                  }}
                   className="w-full bg-white border border-[#CFE7F5] rounded-xl px-3 py-2.5 text-sm text-[#0F2346] focus:outline-none focus:border-gold-500"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
@@ -707,7 +749,25 @@ export default function BookTransferPage({
                       {num} {num === 1 ? 'Passenger' : 'Passengers'}
                     </option>
                   ))}
+                  <option value="custom">Add Custom</option>
                 </select>
+                {isCustomPassengers && (
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={passengers}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        setPassengers(isNaN(val) || val < 1 ? 1 : val);
+                      }}
+                      placeholder="Enter passenger count"
+                      className="w-full bg-white border border-gold-400 rounded-xl px-3 py-2 text-sm text-[#0F2346] focus:outline-none focus:border-gold-600 font-semibold"
+                    />
+                    <span className="text-[10px] text-gray-500 mt-0.5 block">Custom quantity (minimum 1)</span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -715,8 +775,16 @@ export default function BookTransferPage({
                   {t('luggageCount')}
                 </label>
                 <select
-                  value={luggage}
-                  onChange={(e) => setLuggage(parseInt(e.target.value, 10))}
+                  value={isCustomLuggage ? 'custom' : luggage}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomLuggage(true);
+                      if (luggage <= 8) setLuggage(9);
+                    } else {
+                      setIsCustomLuggage(false);
+                      setLuggage(parseInt(e.target.value, 10));
+                    }
+                  }}
                   className="w-full bg-white border border-[#CFE7F5] rounded-xl px-3 py-2.5 text-sm text-[#0F2346] focus:outline-none focus:border-gold-500"
                 >
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
@@ -724,7 +792,25 @@ export default function BookTransferPage({
                       {num} {num === 1 ? 'Suitcase' : 'Suitcases'}
                     </option>
                   ))}
+                  <option value="custom">Add Custom</option>
                 </select>
+                {isCustomLuggage && (
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={luggage}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        setLuggage(isNaN(val) || val < 0 ? 0 : val);
+                      }}
+                      placeholder="Enter suitcase count"
+                      className="w-full bg-white border border-gold-400 rounded-xl px-3 py-2 text-sm text-[#0F2346] focus:outline-none focus:border-gold-600 font-semibold"
+                    />
+                    <span className="text-[10px] text-gray-500 mt-0.5 block">Custom quantity (minimum 0)</span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -732,8 +818,16 @@ export default function BookTransferPage({
                   {t('cabinLuggageCount')}
                 </label>
                 <select
-                  value={cabinLuggage}
-                  onChange={(e) => setCabinLuggage(parseInt(e.target.value, 10))}
+                  value={isCustomCabinLuggage ? 'custom' : cabinLuggage}
+                  onChange={(e) => {
+                    if (e.target.value === 'custom') {
+                      setIsCustomCabinLuggage(true);
+                      if (cabinLuggage <= 8) setCabinLuggage(9);
+                    } else {
+                      setIsCustomCabinLuggage(false);
+                      setCabinLuggage(parseInt(e.target.value, 10));
+                    }
+                  }}
                   className="w-full bg-white border border-[#CFE7F5] rounded-xl px-3 py-2.5 text-sm text-[#0F2346] focus:outline-none focus:border-gold-500"
                 >
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
@@ -741,7 +835,25 @@ export default function BookTransferPage({
                       {num} {num === 1 ? 'Cabin Bag' : 'Cabin Bags'}
                     </option>
                   ))}
+                  <option value="custom">Add Custom</option>
                 </select>
+                {isCustomCabinLuggage && (
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={cabinLuggage}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        setCabinLuggage(isNaN(val) || val < 0 ? 0 : val);
+                      }}
+                      placeholder="Enter cabin bag count"
+                      className="w-full bg-white border border-gold-400 rounded-xl px-3 py-2 text-sm text-[#0F2346] focus:outline-none focus:border-gold-600 font-semibold"
+                    />
+                    <span className="text-[10px] text-gray-500 mt-0.5 block">Custom quantity (minimum 0)</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -798,7 +910,7 @@ export default function BookTransferPage({
               />
             </div>
 
-            <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4">
               <button
                 type="button"
                 onClick={() => setStep(1)}
@@ -807,13 +919,33 @@ export default function BookTransferPage({
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" />
                 <span>Back</span>
               </button>
-              <button
-                type="submit"
-                className="gold-button px-8 py-3.5 rounded-xl text-sm font-bold flex items-center space-x-2 shadow-gold"
-              >
-                <span>Continue to Vehicle Selection</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+
+              <div className="flex flex-col sm:items-end items-center gap-1.5">
+                <div className="flex items-baseline gap-2 bg-[#EAF5FC] px-3.5 py-1.5 rounded-xl border border-[#CFE7F5]">
+                  <span className="text-xs font-semibold text-[#0F2346]/70">Calculated Fare:</span>
+                  <span className="text-lg font-black text-[#0F2346]">
+                    €{pricingBreakdown
+                      ? (hasPreselectedVehicle
+                          ? pricingBreakdown.totalFare
+                          : (pricingBreakdown.baseFare + pricingBreakdown.additionalCharges)
+                        ).toFixed(2)
+                      : '25.00'}
+                  </span>
+                  {(babyBoosters > 0 || babySeats > 0) && (
+                    <span className="text-[10px] text-gold-600 font-bold">
+                      (incl. child seats)
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="gold-button w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold flex items-center justify-center space-x-2 shadow-gold"
+                >
+                  <span>Continue to Vehicle Selection</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </form>
         )}
@@ -934,7 +1066,7 @@ export default function BookTransferPage({
                 <span className="text-gold-600 font-bold uppercase tracking-wider block">Passenger & Vehicle</span>
                 <p className="text-[#0F2346]"><strong className="text-[#0F2346]/70">Lead Passenger:</strong> {customerName}</p>
                 <p className="text-[#0F2346]"><strong className="text-[#0F2346]/70">Contact:</strong> {customerEmail} | {customerPhone}</p>
-                <p className="text-[#0F2346]"><strong className="text-[#0F2346]/70">Vehicle:</strong> {selectedCategory.replace('_', ' ')} Class</p>
+                <p className="text-[#0F2346]"><strong className="text-[#0F2346]/70">Vehicle:</strong> {selectedCategory ? selectedCategory.replace('_', ' ') : 'Standard'} Class</p>
                 <p className="text-[#0F2346]"><strong className="text-[#0F2346]/70">Capacity:</strong> {passengers} Pax, {luggage} Check-in Bags, {cabinLuggage} Cabin Bags</p>
                 {(babyBoosters > 0 || babySeats > 0) && (
                   <p className="text-[#0F2346]">
@@ -956,7 +1088,7 @@ export default function BookTransferPage({
                 </div>
                 {pricingBreakdown.vehicleSurcharge > 0 && (
                   <div className="flex items-center justify-between text-xs text-[#0F2346]/80">
-                    <span>Vehicle Class Surcharge ({selectedCategory.replace('_', ' ')}):</span>
+                    <span>Vehicle Class Surcharge ({selectedCategory ? selectedCategory.replace('_', ' ') : ''}):</span>
                     <span>€{pricingBreakdown.vehicleSurcharge.toFixed(2)}</span>
                   </div>
                 )}

@@ -21,7 +21,7 @@ export default function CruisePortTransfersPage({
             Barcelona Cruise Port Transfers
           </h1>
           <p className="text-sm sm:text-base text-ice-300">
-            Direct, comfortable transfers between Barcelona Cruise Terminals and the City Centre or Airport with fixed rates: Sedan â‚¬42 | Van â‚¬70 and 30 minutes complimentary waiting.
+            Direct, comfortable transfers between Barcelona Cruise Terminals and the City Centre or Airport with fixed rates: Sedan €42 | Van €70 and 30 minutes complimentary waiting.
           </p>
         </div>
 
@@ -34,10 +34,10 @@ export default function CruisePortTransfersPage({
               Sedan Transfers (1 - 4 Passengers)
             </span>
             <div className="text-3xl font-serif font-bold text-white">
-              â‚¬42.00 <span className="text-xs font-sans text-ice-300 font-normal">Base Fare</span>
+              €42.00 <span className="text-xs font-sans text-ice-300 font-normal">Base Fare</span>
             </div>
             <p className="text-xs sm:text-sm text-ice-300">
-              Includes Economy, Standard (+â‚¬5), and Premium (+â‚¬10) sedans. Door-to-pier luggage assistance and 30 minutes free waiting time included.
+              Includes Economy, Standard (+€5), and Premium (+€10) sedans. Door-to-pier luggage assistance and 30 minutes free waiting time included.
             </p>
           </div>
 
@@ -46,7 +46,7 @@ export default function CruisePortTransfersPage({
               High-Capacity Vans (5 - 8 Passengers)
             </span>
             <div className="text-3xl font-serif font-bold text-white">
-              â‚¬70.00 <span className="text-xs font-sans text-ice-300 font-normal">Guaranteed Fixed Fare</span>
+              €70.00 <span className="text-xs font-sans text-ice-300 font-normal">Guaranteed Fixed Fare</span>
             </div>
             <p className="text-xs sm:text-sm text-ice-300">
               Spacious VW Caravelle or Mercedes V-Class accommodating heavy cruise luggage, golf bags, and families without surcharge stacking.

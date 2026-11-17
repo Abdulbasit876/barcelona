@@ -79,10 +79,10 @@ export default function ContactUsPage({
                 <div className="space-y-1">
                   <span className="font-bold text-white block">24/7 Call Center</span>
                   <a href="tel:+34687433263" className="block hover:text-gold-300 text-gold-400">
-                    +34 687 433 263 (Hamid)
+                    +34 687 433 263
                   </a>
                   <a href="tel:+34602194060" className="block hover:text-gold-300 text-gold-400">
-                    +34 602 194 060 (Waqas)
+                    +34 602 194 060
                   </a>
                 </div>
               </div>

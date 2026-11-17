@@ -370,3 +370,8 @@ ON CONFLICT (slug) DO NOTHING;
 -- data have been created successfully.
 -- ================================================================
 SELECT 'Migration complete! Tables created: vehicles, admin_users, drivers, bookings, rides, reviews, notifications, audit_logs, famous_places' AS status;
+
+
+-- Add customer_whatsapp column
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_whatsapp VARCHAR(50);
+COMMENT ON COLUMN bookings.customer_whatsapp IS 'Customer WhatsApp phone number with country code';

@@ -57,6 +57,23 @@ export default function FleetPage({
                     <p className="text-xs text-gold-400 font-semibold mb-3">
                       {vehicle.exampleModels.replace(/Â/g, '')}
                     </p>
+                    {vehicle.category === 'LARGE_GROUP' && (
+                      <div className="mb-4 p-3 rounded-xl bg-navy-950/90 border border-gold-500/30 text-xs">
+                        <div className="text-[11px] font-bold text-gold-400 uppercase tracking-wider mb-2">
+                          Multiple Vehicle Booking Examples:
+                        </div>
+                        <div className="space-y-1 text-ice-200">
+                          <div className="flex justify-between items-center py-1 border-b border-navy-800">
+                            <span className="font-semibold text-white">For 21 Passengers:</span>
+                            <span className="font-bold text-gold-300">3 × Mercedes V-Class</span>
+                          </div>
+                          <div className="flex justify-between items-center py-1">
+                            <span className="font-semibold text-white">For 16 Passengers:</span>
+                            <span className="font-bold text-gold-300">2 × Ford Tourneo</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <p className="text-xs sm:text-sm text-ice-300 leading-relaxed mb-6">
                       {desc}
                     </p>

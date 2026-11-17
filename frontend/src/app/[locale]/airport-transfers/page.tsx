@@ -22,7 +22,7 @@ export default function AirportTransfersPage({
             Barcelona Airport Transfers
           </h1>
           <p className="text-sm sm:text-base text-ice-300">
-            Punctual, private airport pickups at Terminal 1 and Terminal 2 with complimentary 60-minute waiting time, flight tracking, and fixed rates from â‚¬3.00/km.
+            Punctual, private airport pickups at Terminal 1 and Terminal 2 with complimentary 60-minute waiting time, flight tracking, and fixed rates from €3.00/km.
           </p>
         </div>
 

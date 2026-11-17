@@ -78,7 +78,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="scroll-smooth">
       <head>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/icons/customer/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icons/customer/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

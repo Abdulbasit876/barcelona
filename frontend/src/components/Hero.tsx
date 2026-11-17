@@ -71,7 +71,7 @@ export default function Hero({ locale }: { locale: string }) {
           {/* Badge */}
           <div
             ref={badgeRef}
-            className="inline-flex items-center px-4 py-1.5 rounded-full bg-gold-500/15 border border-gold-500/40 text-gold-400 text-xs font-semibold tracking-widest uppercase mb-6"
+            className="inline-flex items-center px-4 py-1.5 rounded-full bg-gold-500/15 border border-gold-500/40 text-[#000000] text-xs font-semibold tracking-widest uppercase mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-gold-400 mr-2 animate-pulse" />
             {t('badge')}

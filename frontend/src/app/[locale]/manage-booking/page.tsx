@@ -657,8 +657,10 @@ export default function ManageBookingPage({
                   <h2 className="text-xl font-black text-navy-950 tracking-tight">
                     Barcelona<span className="text-[#c48e3a]">Taxi</span>Transfer
                   </h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Premier Chauffeur & Private Airport Transfers</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Premier Chauffeur &amp; Private Airport Transfers</p>
                   <p className="text-xs text-gray-500">VAT ID: ES-B88291048 | Barcelona, Spain</p>
+                  <p className="text-xs text-gray-500">Phone: +34 602 194 060 (Waqas)</p>
+                  <p className="text-xs text-gray-500">Email: bookings.barcelonataxitransfer@gmail.com</p>
                 </div>
                 <div className="text-right">
                   <span className={`inline-block px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider ${

@@ -181,7 +181,14 @@ export class PricingService {
       case TransferType.CITY_TRANSFER:
       default: {
         freeWaitingTimeMinutes = PRICING_CONFIG.CITY_TRANSFER.FREE_WAITING_MINS;
-        baseFare = Math.round((PRICING_CONFIG.CITY_TRANSFER.BASE_FARE + distanceKm * PRICING_CONFIG.CITY_TRANSFER.PER_KM_RATE) * 100) / 100;
+        const threshold = PRICING_CONFIG.CITY_TRANSFER.BASE_KM_THRESHOLD || 2.5;
+        const baseRate = PRICING_CONFIG.CITY_TRANSFER.BASE_FARE || 25.0;
+        const perKmRate = PRICING_CONFIG.CITY_TRANSFER.PER_KM_RATE || 3.0;
+        if (distanceKm <= threshold) {
+          baseFare = baseRate;
+        } else {
+          baseFare = Math.round((baseRate + (distanceKm - threshold) * perKmRate) * 100) / 100;
+        }
         vehicleSurcharge = PRICING_CONFIG.CATEGORY_SURCHARGES[vehicleCategory] || 0;
         pricingRuleApplied = 'Barcelona Point-to-Point City Transfer';
         break;

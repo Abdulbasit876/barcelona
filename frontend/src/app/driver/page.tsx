@@ -428,6 +428,8 @@ export default function DriverPortalPage() {
   if (selectedRide && rideDetails) {
     const rawPhone = rideDetails.customer_phone || rideDetails.customerPhone || '';
     const cleanPhone = cleanPhoneNumber(rawPhone);
+    const rawWhatsapp = rideDetails.customer_whatsapp || rideDetails.customerWhatsapp || rideDetails.flight_details?.customer_whatsapp || '';
+    const cleanWhatsapp = cleanPhoneNumber(rawWhatsapp) || cleanPhone;
     const customerName = rideDetails.customer_name || rideDetails.customerName || 'Customer';
     const customerEmail = rideDetails.customer_email || rideDetails.customerEmail || '';
     const pickupAddress = rideDetails.pickup_address || rideDetails.pickupAddress || 'Barcelona';
@@ -641,7 +643,8 @@ export default function DriverPortalPage() {
                     )}
                   </button>
                 </div>
-                {rawPhone && <div className="text-xs font-bold text-slate-600 mt-1">{rawPhone}</div>}
+                {rawPhone && <div className="text-xs font-bold text-slate-600 mt-1">Phone: {rawPhone}</div>}
+                {rawWhatsapp && <div className="text-xs font-bold text-emerald-700 mt-0.5">WhatsApp: {rawWhatsapp}</div>}
                 {customerEmail && <div className="text-[11px] text-slate-400 font-medium">{customerEmail}</div>}
               </div>
               <div className="w-12 h-12 rounded-2xl bg-navy-50 text-navy-800 flex items-center justify-center font-black text-lg border border-navy-100">
@@ -661,7 +664,7 @@ export default function DriverPortalPage() {
                     <span>Call</span>
                   </a>
                   <a
-                    href={`https://wa.me/${cleanPhone.replace('+', '')}`}
+                    href={`https://wa.me/${cleanWhatsapp.replace('+', '')}`}
                     target="_blank"
                     rel="noreferrer"
                     className="flex flex-col items-center justify-center py-2.5 px-2 bg-green-50 hover:bg-green-100 border border-green-200 text-green-800 font-bold rounded-2xl text-xs transition"
@@ -857,7 +860,7 @@ export default function DriverPortalPage() {
                       {onlinePayUrl}
                     </div>
                     <a
-                      href={`https://wa.me/${cleanPhone}?text=Hello%20${encodeURIComponent(customerName)},%20please%20complete%20the%20remaining%20balance%20payment%20of%20€${cashToCollect.toFixed(2)}%20for%20your%20ride%20at:%20${encodeURIComponent(onlinePayUrl)}`}
+                      href={`https://wa.me/${cleanWhatsapp}?text=Hello%20${encodeURIComponent(customerName)},%20please%20complete%20the%20remaining%20balance%20payment%20of%20€${cashToCollect.toFixed(2)}%20for%20your%20ride%20at:%20${encodeURIComponent(onlinePayUrl)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="w-full py-2 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm"
@@ -1357,6 +1360,8 @@ export default function DriverPortalPage() {
                     const pTime = formatDateTime(ride.pickup_datetime || ride.pickupDateTime);
                     const rawPhone = ride.customer_phone || ride.customerPhone || '';
                     const cleanPhone = cleanPhoneNumber(rawPhone);
+                    const rawWhatsapp = ride.customer_whatsapp || ride.customerWhatsapp || ride.flight_details?.customer_whatsapp || '';
+                    const cleanWhatsapp = cleanPhoneNumber(rawWhatsapp) || cleanPhone;
                     const totalFare = Number(ride.total_fare || ride.totalFare || 0);
                     const balance = Number(ride.remaining_balance ?? ride.remainingBalance ?? 0);
                     const notesStr = String(ride.driver_notes || ride.driverNotes || '');
@@ -1491,7 +1496,7 @@ export default function DriverPortalPage() {
                                 <Phone className="w-3.5 h-3.5" />
                               </a>
                               <a
-                                href={`https://wa.me/${cleanPhone.replace('+', '')}`}
+                                href={`https://wa.me/${cleanWhatsapp.replace('+', '')}`}
                                 target="_blank"
                                 rel="noreferrer"
                                 onClick={(e) => e.stopPropagation()}

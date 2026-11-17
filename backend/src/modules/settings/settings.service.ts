@@ -101,7 +101,7 @@ export class SettingsService {
   };
 
   private defaultPricingRules: PricingRulesConfig = {
-    city_base_fare: 20.0,
+    city_base_fare: 25.0,
     city_base_threshold_km: 2.5,
     city_per_km_rate: 3.0,
     baby_seat_price: 9.0,

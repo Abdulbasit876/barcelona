@@ -21,8 +21,8 @@ export default function QuickBookingWidget({ locale }: { locale: string }) {
   const t = useTranslations('widget');
   const router = useRouter();
 
-  const [pickup, setPickup] = useState('Barcelona El Prat Airport (BCN) Terminal 1');
-  const [destination, setDestination] = useState('Plaça de Catalunya, Barcelona');
+  const [pickup, setPickup] = useState('');
+  const [destination, setDestination] = useState('');
   const [date, setDate] = useState(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);

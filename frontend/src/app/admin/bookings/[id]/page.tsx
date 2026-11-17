@@ -17,6 +17,7 @@ import {
   Navigation,
   FileText,
   AlertTriangle,
+  MessageCircle,
 } from 'lucide-react';
 
 export default function BookingDetailPage() {
@@ -392,6 +393,21 @@ export default function BookingDetailPage() {
                     {booking.customer_phone}
                   </a>
                 </div>
+
+                {(booking.customer_whatsapp || booking.flight_details?.customer_whatsapp) && (
+                  <div>
+                    <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">WhatsApp</div>
+                    <a
+                      href={`https://wa.me/${String(booking.customer_whatsapp || booking.flight_details?.customer_whatsapp).replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-700 hover:underline flex items-center gap-1.5 font-bold"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      {booking.customer_whatsapp || booking.flight_details?.customer_whatsapp}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { MapPin, CheckCircle2, Loader2 } from 'lucide-react';
+import { MapPin, CheckCircle2, Loader2, X } from 'lucide-react';
 
 export interface PlaceSelection {
   address: string;
@@ -167,16 +167,36 @@ export default function PlacesAutocomplete({
           }}
           placeholder={placeholder}
           required={required}
-          className={`w-full pl-10 pr-9 py-3 bg-navy-900/90 border border-navy-700 rounded-xl text-sm text-white placeholder-ice-400/50 focus:outline-none focus:border-gold-500 transition-colors ${className}`}
+          className={`w-full pl-10 pr-14 py-3 bg-navy-900/90 border border-navy-700 rounded-xl text-sm text-white placeholder-ice-400/50 focus:outline-none focus:border-gold-500 transition-colors ${className}`}
           autoComplete="off"
         />
 
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10">
           {loading ? (
             <Loader2 className="w-4 h-4 text-gold-400 animate-spin" />
           ) : selectedPlace ? (
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           ) : null}
+
+          {query && !loading && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setQuery('');
+                setSelectedPlace(null);
+                setSuggestions([]);
+                setIsOpen(false);
+                onChange('', undefined);
+              }}
+              className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-700/50 transition cursor-pointer"
+              title="Clear input"
+              aria-label="Clear location input"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 

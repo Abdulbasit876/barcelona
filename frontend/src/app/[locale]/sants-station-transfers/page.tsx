@@ -21,7 +21,7 @@ export default function SantsStationTransfersPage({
             Barcelona Sants Train Transfers
           </h1>
           <p className="text-sm sm:text-base text-ice-300">
-            Hassle-free private transfers to and from Barcelona Sants for AVE, TGV, and Ouigo high-speed trains. Sedan â‚¬32 | Van â‚¬45 fixed rates with 15 minutes free waiting time.
+            Hassle-free private transfers to and from Barcelona Sants for AVE, TGV, and Ouigo high-speed trains. Sedan €32 | Van €45 fixed rates with 15 minutes free waiting time.
           </p>
         </div>
 
@@ -34,10 +34,10 @@ export default function SantsStationTransfersPage({
               Sedan Transfers (1 - 4 Passengers)
             </span>
             <div className="text-3xl font-serif font-bold text-white">
-              â‚¬32.00 <span className="text-xs font-sans text-ice-300 font-normal">Base Fare</span>
+              €32.00 <span className="text-xs font-sans text-ice-300 font-normal">Base Fare</span>
             </div>
             <p className="text-xs sm:text-sm text-ice-300">
-              Economy, Standard (+â‚¬5), and Premium (+â‚¬10) sedans. Chauffeur meets you at the central main concourse exit.
+              Economy, Standard (+€5), and Premium (+€10) sedans. Chauffeur meets you at the central main concourse exit.
             </p>
           </div>
 
@@ -46,7 +46,7 @@ export default function SantsStationTransfersPage({
               Van Transfers (5 - 8 Passengers)
             </span>
             <div className="text-3xl font-serif font-bold text-white">
-              â‚¬45.00 <span className="text-xs font-sans text-ice-300 font-normal">Fixed Fare</span>
+              €45.00 <span className="text-xs font-sans text-ice-300 font-normal">Fixed Fare</span>
             </div>
             <p className="text-xs sm:text-sm text-ice-300">
               Fixed fare for family groups and heavy train luggage. Direct, smooth connection to your hotel or airport terminal.

@@ -46,7 +46,7 @@ export default function BookingConfirmationPage({
 
   // Card modal & info state
   const [showCardModal, setShowCardModal] = useState(false);
-  const [cardName, setCardName] = useState('Haseeb');
+  const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('4242 4242 4242 4242');
   const [cardExpiry, setCardExpiry] = useState('12/28');
   const [cardCvc, setCardCvc] = useState('123');
@@ -464,7 +464,7 @@ export default function BookingConfirmationPage({
                   <span>
                     {paying
                       ? 'Processing Secure Payment...'
-                      : `Pay â‚¬${(booking?.fareBreakdown?.totalFare || 48.5).toFixed(2)} EUR Now`}
+                      : `Pay €${(booking?.fareBreakdown?.totalFare || 48.5).toFixed(2)} EUR Now`}
                   </span>
                 </button>
               </div>
@@ -522,7 +522,8 @@ export default function BookingConfirmationPage({
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">Premier Chauffeur & Private Airport Transfers</p>
                   <p className="text-xs text-gray-500">VAT ID: ES-B88291048 | Barcelona, Spain</p>
-                  <p className="text-xs text-gray-500">bookings@barcelonataxitransfer.com</p>
+                  <p className="text-xs text-gray-500">Phone: +34 602 194 060 (Waqas)</p>
+                  <p className="text-xs text-gray-500">Email: bookings.barcelonataxitransfer@gmail.com</p>
                 </div>
                 <div className="text-right">
                   <span className="inline-block px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
@@ -602,20 +603,20 @@ export default function BookingConfirmationPage({
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Base Transfer Fare</span>
-                  <span>â‚¬{((booking?.fareBreakdown?.totalFare || 48.5) - 5).toFixed(2)}</span>
+                  <span>€{((booking?.fareBreakdown?.totalFare || 48.5) - 5).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Vehicle Class & Disinfection Fee</span>
-                  <span>â‚¬5.00</span>
+                  <span>€5.00</span>
                 </div>
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>Tolls, Airport Access & Waiting Time</span>
-                  <span className="text-emerald-600 font-semibold">Included (â‚¬0.00)</span>
+                  <span className="text-emerald-600 font-semibold">Included (€0.00)</span>
                 </div>
                 <div className="flex justify-between text-base font-bold text-navy-950 pt-2 border-t border-gray-300">
                   <span>Total Paid (EUR)</span>
                   <span className="text-[#c48e3a] text-xl">
-                    â‚¬{(booking?.fareBreakdown?.totalFare || 48.5).toFixed(2)}
+                    €{(booking?.fareBreakdown?.totalFare || 48.5).toFixed(2)}
                   </span>
                 </div>
               </div>

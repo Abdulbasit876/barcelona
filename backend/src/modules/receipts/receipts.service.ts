@@ -29,7 +29,7 @@ export class ReceiptsService {
       doc.fillColor('#FFFFFF').fontSize(11).font('Helvetica')
         .text('Official Private Chauffeur & VIP Airport Transfers', 40, 62);
       doc.fillColor('#94A3B8').fontSize(9)
-        .text('Barcelona, Catalonia, Spain • support@barcelonataxitransfer.com', 40, 78);
+        .text('Barcelona, Catalonia, Spain • Phone: +34 602 194 060 (Waqas) • bookings.barcelonataxitransfer@gmail.com', 40, 78);
 
       // Invoice / Receipt Metadata
       doc.fillColor('#C5A059').fontSize(14).font('Helvetica-Bold')
@@ -133,7 +133,7 @@ export class ReceiptsService {
 
       // Footer
       doc.fillColor('#94A3B8').fontSize(8).font('Helvetica')
-        .text('Thank you for choosing Barcelona Taxi Transfer. For 24/7 assistance call +34 930 000 000.', 40, 770, { align: 'center', width: 515 });
+        .text('Thank you for choosing Barcelona Taxi Transfer. For 24/7 assistance call +34 602 194 060 (Waqas).', 40, 770, { align: 'center', width: 515 });
 
       doc.end();
     });
