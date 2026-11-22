@@ -159,7 +159,7 @@ export default function BookingDetailPage() {
 
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-6xl">
         {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Link
             href="/admin/bookings"
             className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-slate-900 transition"
@@ -168,7 +168,7 @@ export default function BookingDetailPage() {
             Back to Bookings
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {booking.status !== 'CANCELLED' && (
               <button
                 onClick={() => setShowCancelModal(true)}

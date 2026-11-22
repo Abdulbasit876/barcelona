@@ -283,12 +283,12 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      <>
         <Header title="Deposit & Pricing Settings" subtitle="System configuration and dispatch rules" />
         <div className="p-12 text-center text-slate-400 text-sm font-semibold">
           Loading configuration...
         </div>
-      </div>
+      </>
     );
   }
 
@@ -296,13 +296,13 @@ export default function SettingsPage() {
   const activeDrivers = drivers.filter((d) => d.is_active !== false && d.status !== 'INACTIVE' && d.status !== 'SUSPENDED');
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <>
       <Header
         title="Deposit & Pricing Settings"
         subtitle="Configure online deposit %, fare calculations, vehicle rates, and automated ride assignment"
       />
-
-      <div className="space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+        <div className="space-y-6">
         {/* Deposit Configuration */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -938,6 +938,7 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

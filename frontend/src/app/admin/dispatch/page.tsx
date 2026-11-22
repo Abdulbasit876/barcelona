@@ -154,11 +154,11 @@ export default function DispatchPage() {
               {/* Assign Controls for unassigned */}
               {!ride.driver_id && (
                 <div className="mt-3 space-y-2">
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <select
                       value={selectedDrivers[ride.id] || ''}
                       onChange={(e) => setSelectedDrivers({ ...selectedDrivers, [ride.id]: e.target.value })}
-                      className="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-navy-800"
+                      className="w-full sm:flex-1 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-navy-800"
                     >
                       <option value="">— Select driver manually —</option>
                       {drivers.filter((d) => d.is_active).map((d) => (
@@ -167,22 +167,24 @@ export default function DispatchPage() {
                         </option>
                       ))}
                     </select>
-                    <button
-                      onClick={() => handleAssign(ride.id)}
-                      disabled={assigning === ride.id || !selectedDrivers[ride.id]}
-                      className="px-3 py-1.5 text-xs font-bold bg-navy-800 hover:bg-navy-900 text-white rounded-xl transition disabled:opacity-40 shadow-sm"
-                    >
-                      {assigning === ride.id ? '...' : 'Assign'}
-                    </button>
-                    <button
-                      onClick={() => handleAutoAssign(ride.id)}
-                      disabled={autoAssigning === ride.id}
-                      className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 rounded-xl transition disabled:opacity-50"
-                      title="Auto-assign using category rules"
-                    >
-                      <Zap className="w-3 h-3 text-amber-600" />
-                      Auto
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleAssign(ride.id)}
+                        disabled={assigning === ride.id || !selectedDrivers[ride.id]}
+                        className="flex-1 sm:flex-none px-3 py-1.5 text-xs font-bold bg-navy-800 hover:bg-navy-900 text-white rounded-xl transition disabled:opacity-40 shadow-sm"
+                      >
+                        {assigning === ride.id ? '...' : 'Assign'}
+                      </button>
+                      <button
+                        onClick={() => handleAutoAssign(ride.id)}
+                        disabled={autoAssigning === ride.id}
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-2.5 py-1.5 text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 rounded-xl transition disabled:opacity-50"
+                        title="Auto-assign using category rules"
+                      >
+                        <Zap className="w-3 h-3 text-amber-600" />
+                        Auto
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

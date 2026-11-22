@@ -296,13 +296,13 @@ export default function DriversPage() {
           </div>
         </div>
 
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-5">
           <div className="text-xs font-bold text-slate-500">
             Driver Performance & Fleet Availability
           </div>
           <button
             onClick={() => { setCreateModal(true); setForm({ name: '', phone: '', email: '', vehiclePlate: '', vehicleModel: '', assignedCategories: ['ECONOMY', 'STANDARD', 'PREMIUM'], licenseNumber: '', isActive: true }); }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-bold text-xs shadow-md shadow-navy-800/10 transition"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-navy-800 hover:bg-navy-900 text-white font-bold text-xs shadow-md shadow-navy-800/10 transition"
           >
             <UserPlus className="w-4 h-4 text-gold-400" />
             Add Driver

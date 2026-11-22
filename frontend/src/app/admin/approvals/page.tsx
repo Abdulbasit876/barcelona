@@ -142,13 +142,13 @@ export default function ApprovalsPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
                     <button
                       onClick={() => {
                         setReviseModal(b);
                         setReviseForm({ revisedFare: b.total_fare, revisionReason: '', notes: '' });
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100 transition shadow-sm"
+                      className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100 transition shadow-sm"
                     >
                       <Edit3 className="w-3.5 h-3.5 text-purple-600" />
                       Revise Fare
@@ -156,14 +156,14 @@ export default function ApprovalsPage() {
                     <button
                       onClick={() => handleApprove(b.id)}
                       disabled={actionLoading === b.id + '-approve'}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm disabled:opacity-50"
+                      className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-sm disabled:opacity-50"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
                       {actionLoading === b.id + '-approve' ? 'Approving…' : 'Approve'}
                     </button>
                     <button
                       onClick={() => { setRejectModal(b); setRejectReason(''); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100 transition shadow-sm"
+                      className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100 transition shadow-sm"
                     >
                       <XCircle className="w-3.5 h-3.5 text-rose-600" />
                       Reject

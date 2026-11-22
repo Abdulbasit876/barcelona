@@ -232,7 +232,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Bookings Table */}
+        {/* Recent Bookings Section */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
           <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -240,14 +240,15 @@ export default function DashboardPage() {
               <h3 className="text-sm font-extrabold text-slate-900">Recent Bookings</h3>
             </div>
             <Link
-              href="/bookings"
+              href="/admin/bookings"
               className="text-xs font-bold text-navy-800 hover:text-amber-600 transition"
             >
               View All →
             </Link>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs min-w-[680px]">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/80">
@@ -333,6 +334,74 @@ export default function DashboardPage() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View (optimized for smartphones) */}
+          <div className="block md:hidden divide-y divide-slate-100">
+            {loading ? (
+              <div className="p-6 text-center text-slate-400 text-xs">Loading recent bookings…</div>
+            ) : recentBookings.length === 0 ? (
+              <div className="p-6 text-center text-slate-400 text-xs">No bookings yet.</div>
+            ) : (
+              recentBookings.map((b) => (
+                <div key={b.id} className="p-4 space-y-2.5 hover:bg-slate-50/60 transition">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono font-bold text-slate-900 text-xs bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                      {b.booking_reference}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                        statusColorMap[b.status] || 'bg-slate-100 text-slate-600 border-slate-200'
+                      }`}
+                    >
+                      {b.status}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-bold text-slate-900 text-xs">{b.customer_name}</div>
+                      <div className="text-[11px] text-slate-500 font-medium">{b.customer_email}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-black text-slate-900 text-sm">
+                        €{Number(b.total_fare || 0).toFixed(2)}
+                      </div>
+                      {b.deposit_amount > 0 && (
+                        <div className="text-[10px] text-emerald-700 font-semibold">
+                          Dep: €{Number(b.deposit_amount).toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                    <span className="font-semibold text-slate-700">
+                      {b.transfer_type} • {b.vehicle_category}
+                    </span>
+                    <span>
+                      {b.pickup_datetime
+                        ? new Date(b.pickup_datetime).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '—'}
+                    </span>
+                  </div>
+
+                  <div className="pt-1 flex justify-end">
+                    <Link
+                      href={`/admin/bookings/${b.id}`}
+                      className="w-full text-center py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-navy-800 hover:text-white text-navy-900 font-bold text-xs transition"
+                    >
+                      View Booking Details →
+                    </Link>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

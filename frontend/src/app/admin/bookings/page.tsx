@@ -282,10 +282,10 @@ export default function BookingsPage() {
         </div>
 
         {/* Filters Row */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-3 shadow-sm">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-sm">
           {/* Search + Action Bar */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative flex-1 min-w-[200px]">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 sm:gap-3">
+            <div className="relative flex-1 min-w-0">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
@@ -296,45 +296,47 @@ export default function BookingsPage() {
               />
             </div>
 
-            {hasFilters && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold hover:bg-rose-100 transition"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Clear</span>
+                </button>
+              )}
+
               <button
-                onClick={clearFilters}
-                className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold hover:bg-rose-100 transition"
+                onClick={fetchBookings}
+                className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 border border-slate-200 rounded-xl transition"
+                title="Refresh bookings list"
               >
-                <X className="w-3.5 h-3.5" />
-                Clear Filters
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               </button>
-            )}
 
-            <button
-              onClick={fetchBookings}
-              className="p-2 text-slate-600 hover:text-slate-900 bg-slate-100 border border-slate-200 rounded-xl transition"
-              title="Refresh bookings list"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+              <button
+                onClick={handleExportCsv}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2 bg-white border border-slate-300 text-slate-700 hover:border-slate-400 rounded-xl text-xs font-bold transition shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+                <span>Export CSV</span>
+              </button>
 
-            <button
-              onClick={handleExportCsv}
-              className="flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-300 text-slate-700 hover:border-slate-400 rounded-xl text-xs font-bold transition shadow-sm"
-            >
-              <Download className="w-3.5 h-3.5 text-slate-500" />
-              Export CSV
-            </button>
-
-            {/* DELETE ALL BOOKINGS BUTTON */}
-            <button
-              type="button"
-              onClick={() => setShowDeleteAllModal(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white rounded-xl text-xs font-bold transition shadow-sm ml-auto"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete All Bookings</span>
-            </button>
+              {/* DELETE ALL BOOKINGS BUTTON */}
+              <button
+                type="button"
+                onClick={() => setShowDeleteAllModal(true)}
+                className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 bg-rose-50 border border-rose-300 text-rose-700 hover:bg-rose-600 hover:text-white rounded-xl text-xs font-bold transition shadow-sm sm:ml-auto"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete All</span>
+              </button>
+            </div>
           </div>
 
           {/* Filter Dropdowns Row */}
-          <div className="flex flex-wrap gap-3">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
             {[
               { label: 'Status', key: 'status', options: STATUSES },
               { label: 'Payment', key: 'paymentStatus', options: PAYMENT_STATUSES },
@@ -345,7 +347,7 @@ export default function BookingsPage() {
                 key={key}
                 value={(filters as any)[key]}
                 onChange={(e) => setFilter(key, e.target.value)}
-                className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800 transition"
+                className="px-2.5 sm:px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800 transition truncate"
               >
                 <option value="">{label}: All</option>
                 {options.filter(Boolean).map((o) => (
@@ -358,20 +360,21 @@ export default function BookingsPage() {
               type="date"
               value={filters.startDate}
               onChange={(e) => setFilter('startDate', e.target.value)}
-              className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800"
+              className="px-2.5 sm:px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800"
             />
             <input
               type="date"
               value={filters.endDate}
               onChange={(e) => setFilter('endDate', e.target.value)}
-              className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800"
+              className="px-2.5 sm:px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:border-navy-800"
             />
           </div>
         </div>
 
-        {/* Bookings Table */}
+        {/* Bookings Section */}
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-xs min-w-[900px]">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50/80">
@@ -612,6 +615,141 @@ export default function BookingsPage() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View (optimized for phones and tablets) */}
+          <div className="block lg:hidden divide-y divide-slate-100">
+            {loading ? (
+              <div className="p-8 text-center text-slate-400 text-xs">Loading bookings…</div>
+            ) : data.items.length === 0 ? (
+              <div className="p-8 text-center text-slate-400 text-xs">
+                <Filter className="w-6 h-6 opacity-40 text-slate-400 mx-auto mb-2" />
+                <span className="font-medium">No bookings match your current filters</span>
+              </div>
+            ) : (
+              data.items.map((b: any) => {
+                const wa = b.customer_whatsapp ||
+                  b.flight_details?.customer_whatsapp ||
+                  (b.special_requests?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]) ||
+                  (b.admin_notes?.match(/\[WhatsApp:\s*([^\]]+)\]/)?.[1]);
+
+                return (
+                  <div key={b.id} className="p-4 space-y-3 hover:bg-slate-50/70 transition">
+                    {/* Top: Reference, Date & Status */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono font-bold text-slate-900 text-xs bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                          {b.booking_reference}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyToClipboard(b.booking_reference, `m-ref-${b.id}`)}
+                          className="p-1 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition"
+                          title="Copy reference"
+                        >
+                          {copiedItem === `m-ref-${b.id}` ? (
+                            <Check className="w-3 h-3 text-emerald-600" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
+                        </button>
+                      </div>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          STATUS_COLORS[b.status] || 'bg-slate-100 text-slate-600 border-slate-200'
+                        }`}
+                      >
+                        {b.status}
+                      </span>
+                    </div>
+
+                    {/* Customer Info */}
+                    <div className="bg-slate-50/70 border border-slate-200/70 rounded-xl p-2.5 space-y-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-bold text-slate-900 text-sm">{b.customer_name}</span>
+                        <button
+                          type="button"
+                          onClick={() => setFullscreenCustomerName(b.customer_name)}
+                          className="p-1 rounded text-slate-500 hover:text-navy-900 hover:bg-white transition"
+                          title="Fullscreen Name Board"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="text-[11px] text-slate-500">{b.customer_email}</div>
+                      <div className="flex items-center gap-3 pt-1 text-xs">
+                        <a href={`tel:${b.customer_phone}`} className="flex items-center gap-1 text-slate-700 font-semibold hover:underline">
+                          <Phone className="w-3 h-3 text-slate-400" />
+                          <span>{b.customer_phone}</span>
+                        </a>
+                        {wa && (
+                          <a
+                            href={`https://wa.me/${String(wa).replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-emerald-700 font-bold hover:underline"
+                          >
+                            <MessageCircle className="w-3 h-3" />
+                            <span>WhatsApp</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Trip & Vehicle Details */}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <div className="text-[10px] uppercase font-bold text-slate-400">Transfer & Vehicle</div>
+                        <div className="font-semibold text-slate-800">{b.transfer_type}</div>
+                        <div className="text-[11px] text-slate-500">{b.vehicle_category} • {b.passengers}P / {b.luggage}L</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase font-bold text-slate-400">Pickup Schedule</div>
+                        <div className="font-semibold text-slate-800">
+                          {b.pickup_datetime
+                            ? new Date(b.pickup_datetime).toLocaleString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : '—'}
+                        </div>
+                        <div className="text-[11px] text-slate-500 truncate" title={b.pickup_address}>
+                          {b.pickup_address}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fare & Payment Row */}
+                    <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-100 bg-slate-50/50 p-2 rounded-xl">
+                      <div>
+                        <div className="font-black text-slate-900 text-sm">
+                          €{Number(b.total_fare || 0).toFixed(2)}
+                        </div>
+                        <div className="text-[10px] text-emerald-700 font-semibold">
+                          Deposit: €{Number(b.deposit_amount || 0).toFixed(2)} ({b.deposit_paid ? 'Paid' : 'Pending'})
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-[10px] text-slate-400">Driver</div>
+                        <div className="font-bold text-xs text-navy-900">
+                          {b.driver ? b.driver.name : 'Unassigned'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action link */}
+                    <Link
+                      href={`/admin/bookings/${b.id}`}
+                      className="block w-full text-center py-2 px-3 rounded-xl bg-slate-100 hover:bg-navy-800 hover:text-white text-navy-900 font-bold text-xs transition"
+                    >
+                      Open Booking Details →
+                    </Link>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
