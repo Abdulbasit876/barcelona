@@ -20,7 +20,9 @@ import {
   AlertCircle,
   Check,
   Lock,
+  Loader2,
 } from 'lucide-react';
+import { StripeElementsWrapper } from '../../../components/payment/StripeElementsWrapper';
 import {
   TransferType,
   VehicleCategory,
@@ -104,6 +106,10 @@ export default function BookTransferPage({
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [createdBookingRef, setCreatedBookingRef] = useState<string | null>(null);
+  const [createdAccessToken, setCreatedAccessToken] = useState<string | null>(null);
+  const [isPreparingPayment, setIsPreparingPayment] = useState<boolean>(false);
 
   // Selected Vehicle & Fare State
   const vehicleParam = searchParams.get('vehicle');
@@ -286,8 +292,99 @@ export default function BookTransferPage({
     setStep(4);
   };
 
-  const handleStep4Submit = () => {
-    setStep(5);
+  const handleStep4Submit = async () => {
+    setIsPreparingPayment(true);
+    setError(null);
+
+    try {
+      let ref = createdBookingRef;
+      let token = createdAccessToken;
+
+      // 1. Create/Reserve the booking record if not already created
+      if (!ref || !token) {
+        const payload = {
+          transferType,
+          pickupAddress,
+          destinationAddress,
+          pickupDate,
+          pickupTime,
+          pickupDateTime: `${pickupDate}T${pickupTime || '12:00'}:00`,
+          customerName,
+          customerEmail,
+          customerPhone,
+          customerWhatsapp: customerWhatsapp || null,
+          passengers,
+          luggage,
+          cabinLuggage,
+          pickupLat: pickupCoords?.lat || null,
+          pickupLng: pickupCoords?.lng || null,
+          dropoffLat: destCoords?.lat || null,
+          dropoffLng: destCoords?.lng || null,
+          babyBoosters,
+          babySeats,
+          vehicleCategory: selectedCategory || VehicleCategory.STANDARD,
+          flightOrTrainNumber,
+          cruiseShipName,
+          specialRequests,
+          preferredLanguage: locale || 'en',
+          baseFare: pricingBreakdown?.baseFare || 45,
+          vehicleSurcharge: pricingBreakdown?.vehicleSurcharge || 0,
+          totalFare: pricingBreakdown?.totalFare || 54,
+          depositPercentage: depositPercentage,
+          depositAmount: Number((((pricingBreakdown?.totalFare || 54) * depositPercentage) / 100).toFixed(2)),
+          remainingBalance: Number((((pricingBreakdown?.totalFare || 54) * (100 - depositPercentage)) / 100).toFixed(2)),
+          paymentStatus: 'PENDING',
+          paymentMethod: 'ONLINE_DEPOSIT',
+          depositPaid: false,
+          balancePaid: false,
+        };
+
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Failed to initialize booking.');
+        }
+
+        ref = data.bookingReference;
+        token = data.accessToken;
+        setCreatedBookingRef(ref);
+        setCreatedAccessToken(token);
+
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`barcelona_booking_${ref}`, JSON.stringify(data.booking));
+          localStorage.setItem('barcelona_last_booking', JSON.stringify(data.booking));
+        }
+      }
+
+      // 2. Request Stripe PaymentIntent from NestJS backend
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api/v1';
+      const piRes = await fetch(`${apiBase}/payments/create-intent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingReference: ref,
+          token: token,
+          email: customerEmail,
+        }),
+      });
+
+      const piData = await piRes.json();
+      if (!piRes.ok || !piData.clientSecret) {
+        throw new Error(piData.message || 'Unable to initialize secure payment gateway.');
+      }
+
+      setClientSecret(piData.clientSecret);
+      setStep(5);
+    } catch (err: any) {
+      setError(err.message || 'Could not initialize secure payment. Please try again.');
+    } finally {
+      setIsPreparingPayment(false);
+    }
   };
 
   const handleFinalSubmit = async (e: React.FormEvent) => {
@@ -1152,11 +1249,21 @@ export default function BookTransferPage({
               <button
                 type="button"
                 onClick={handleStep4Submit}
-                className="gold-button px-8 py-4 rounded-xl text-base font-bold flex items-center space-x-2 shadow-gold"
+                disabled={isPreparingPayment}
+                className="gold-button px-8 py-4 rounded-xl text-base font-bold flex items-center space-x-2 shadow-gold disabled:opacity-50"
               >
-                <CreditCard className="w-5 h-5" />
-                <span>Proceed to Payment</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
+                {isPreparingPayment ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Preparing Secure Checkout...</span>
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="w-5 h-5" />
+                    <span>Proceed to Payment</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -1166,7 +1273,7 @@ export default function BookTransferPage({
         {/* STEP 5: Secure Card Payment                              */}
         {/* ======================================================== */}
         {step === 5 && (
-          <form onSubmit={handleFinalSubmit} className={cardContainerClass}>
+          <div className={cardContainerClass}>
             <div className="border-b border-[#CFE7F5] pb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <span className="text-xs font-bold text-gold-600 uppercase tracking-widest block mb-1">
@@ -1188,117 +1295,36 @@ export default function BookTransferPage({
                 Secure Payment<br />Gateway:
               </div>
               <div className="text-[12px] text-[#0F2346]/80 leading-relaxed">
-                All transactions are encrypted with 256-bit SSL. For testing or reservations, you may enter any standard card details.
+                All transactions are encrypted with 256-bit SSL via Stripe. Card details are securely processed and never stored on our servers.
               </div>
             </div>
 
-            {/* Payment Summary: Admin-configured Advance Deposit % + Remaining Balance to Driver */}
-            <div className="p-4 rounded-xl bg-white border border-[#CFE7F5] space-y-2">
-              <div className="flex items-center justify-between text-xs text-[#0F2346]/70">
-                <span>Total Transfer Fare:</span>
-                <span className="font-bold text-[#0F2346]">€{(pricingBreakdown?.totalFare || 54.0).toFixed(2)} EUR</span>
+            {clientSecret ? (
+              <StripeElementsWrapper
+                clientSecret={clientSecret}
+                bookingReference={createdBookingRef || ''}
+                accessToken={createdAccessToken || ''}
+                totalFare={pricingBreakdown?.totalFare || 54.0}
+                depositPercentage={depositPercentage}
+                customerName={customerName}
+                customerEmail={customerEmail}
+                locale={locale}
+                onBack={() => setStep(4)}
+                onSuccess={(ref, token) => {
+                  router.push(
+                    `/${locale}/booking-confirmation/${ref}?token=${token}&email=${encodeURIComponent(
+                      customerEmail,
+                    )}&category=${selectedCategory || VehicleCategory.STANDARD}&total=${pricingBreakdown?.totalFare || 54}&payment_success=true`,
+                  );
+                }}
+              />
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center space-y-3">
+                <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+                <span className="text-sm text-[#0F2346]/70 font-medium">Initializing secure Stripe Elements...</span>
               </div>
-              <div className="flex items-center justify-between text-xs text-emerald-700 font-semibold">
-                <span>{depositPercentage}% Advance Deposit Due Today (Online):</span>
-                <span className="text-xl font-bold text-emerald-600">
-                  €{(((pricingBreakdown?.totalFare || 54.0) * depositPercentage) / 100).toFixed(2)} EUR
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-xs text-amber-800 border-t border-[#CFE7F5] pt-2">
-                <span>Remaining Balance Payable to Driver ({100 - depositPercentage}%):</span>
-                <span className="font-bold">
-                  €{(((pricingBreakdown?.totalFare || 54.0) * (100 - depositPercentage)) / 100).toFixed(2)} EUR
-                </span>
-              </div>
-            </div>
-
-            {/* Card Information Fields */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
-                  Cardholder Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                  placeholder="e.g. John Doe"
-                  className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-3 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 focus:outline-none focus:border-gold-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
-                  Card Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  placeholder="4242 4242 4242 4242"
-                  maxLength={19}
-                  className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-3 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 font-mono focus:outline-none focus:border-gold-500 transition-colors"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
-                    Expiration (MM/YY) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={cardExpiry}
-                    onChange={(e) => setCardExpiry(e.target.value)}
-                    placeholder="12/28"
-                    maxLength={5}
-                    className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-3 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 font-mono focus:outline-none focus:border-gold-500 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-[#0F2346] mb-1.5">
-                    CVC / CVV <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={cardCvc}
-                    onChange={(e) => setCardCvc(e.target.value)}
-                    placeholder="123"
-                    maxLength={4}
-                    className="w-full bg-white border border-[#CFE7F5] rounded-xl px-4 py-3 text-sm text-[#0F2346] placeholder:text-[#0F2346]/40 font-mono focus:outline-none focus:border-gold-500 transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Submit & Back buttons */}
-            <div className="pt-4 flex items-center justify-between border-t border-[#CFE7F5]">
-              <button
-                type="button"
-                onClick={() => setStep(4)}
-                className="text-xs font-semibold text-[#0F2346]/70 hover:text-[#0F2346] flex items-center space-x-1"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-                <span>Back to Review</span>
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto bg-gold-500 hover:bg-gold-400 active:bg-gold-600 text-navy-950 font-bold py-3.5 px-8 rounded-full flex items-center justify-center space-x-2 shadow-gold transition-all text-sm disabled:opacity-50"
-              >
-                <Lock className="w-4 h-4" />
-                <span>
-                  {loading
-                    ? 'Processing Payment & Confirming...'
-                    : `Pay ${depositPercentage}% Advance Deposit (€${((pricingBreakdown?.totalFare || 54.0) * depositPercentage / 100).toFixed(2)} EUR) & Confirm`}
-                </span>
-              </button>
-            </div>
-          </form>
+            )}
+          </div>
         )}
       </div>
     </div>

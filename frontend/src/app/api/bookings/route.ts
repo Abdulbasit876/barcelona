@@ -307,7 +307,7 @@ export async function POST(request: NextRequest) {
       deposit_percentage: depositPct,
       deposit_amount: depositAmount,
       remaining_balance: remainingBalance,
-      deposit_paid: true,
+      deposit_paid: false,
       balance_paid: false,
       fare_breakdown: {
         totalFare,

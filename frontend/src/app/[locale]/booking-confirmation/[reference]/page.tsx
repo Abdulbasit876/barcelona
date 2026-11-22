@@ -41,7 +41,7 @@ export default function BookingConfirmationPage({
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [isPaid, setIsPaid] = useState(paymentSuccess || isMockPayment);
+  const [isPaid, setIsPaid] = useState(false);
   const [copied, setCopied] = useState(false);
 
   // Card modal & info state
