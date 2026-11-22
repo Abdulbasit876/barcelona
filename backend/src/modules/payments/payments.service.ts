@@ -319,6 +319,41 @@ export class PaymentsService {
 
     if (error || !booking) throw new NotFoundException(`Booking #${reference} not found.`);
 
+    // Auto-reconciliation: If Stripe succeeded but DB was delayed or webhook missed, sync immediately
+    if (booking.payment_status !== 'PAID' && booking.stripe_payment_intent_id && this.stripe) {
+      try {
+        const pi = await this.stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+        if (pi && pi.status === 'succeeded') {
+          const nowIso = new Date().toISOString();
+          await this.supabase
+            .getClient()
+            .from('bookings')
+            .update({
+              payment_status: 'PAID',
+              deposit_paid: true,
+              balance_paid: true,
+              remaining_balance: 0,
+              status: booking.status === 'CANCELLED' ? 'CANCELLED' : 'CONFIRMED',
+              fare_breakdown: {
+                ...(booking.fare_breakdown || {}),
+                paid_at: nowIso,
+                stripe_payment_intent_id: pi.id,
+                reconciled_via: 'status_check',
+              },
+            })
+            .eq('id', booking.id);
+
+          booking.payment_status = 'PAID';
+          booking.deposit_paid = true;
+          booking.balance_paid = true;
+          booking.remaining_balance = 0;
+          this.logger.log(`Auto-reconciled successful Stripe PaymentIntent ${pi.id} for #${reference}`);
+        }
+      } catch (piErr: any) {
+        this.logger.warn(`Could not auto-reconcile PaymentIntent for #${reference}: ${piErr.message}`);
+      }
+    }
+
     return {
       bookingReference: booking.booking_reference,
       bookingStatus: booking.status,

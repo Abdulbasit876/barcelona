@@ -36,12 +36,13 @@ export default function BookingConfirmationPage({
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
   const isMockPayment = searchParams.get('mock_payment') === 'true';
-  const paymentSuccess = searchParams.get('payment_success') === 'true';
+  const redirectStatus = searchParams.get('redirect_status');
+  const paymentSuccess = searchParams.get('payment_success') === 'true' || redirectStatus === 'succeeded';
 
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
+  const [isPaid, setIsPaid] = useState(paymentSuccess);
   const [copied, setCopied] = useState(false);
 
   // Card modal & info state
@@ -67,12 +68,25 @@ export default function BookingConfirmationPage({
   };
 
   const fetchBooking = async () => {
+    // 1. Authoritative check: Check live payment status endpoint
+    try {
+      const payRes = await fetch(`/api/payments/status/${encodeURIComponent(reference)}`);
+      if (payRes.ok) {
+        const payData = await payRes.json();
+        if (payData.paymentStatus === 'PAID' || payData.depositPaid === true) {
+          setIsPaid(true);
+        }
+      }
+    } catch (e) {
+      // Continue to next checks
+    }
+
     try {
       const res = await fetch(`/api/bookings?reference=${reference}&token=${token}`);
       if (res.ok) {
         const data = await res.json();
         setBooking(data);
-        if (data.payment_status === 'PAID' || data.paymentStatus === 'PAID') {
+        if (data.payment_status === 'PAID' || data.paymentStatus === 'PAID' || data.deposit_paid === true) {
           setIsPaid(true);
         }
         setLoading(false);
