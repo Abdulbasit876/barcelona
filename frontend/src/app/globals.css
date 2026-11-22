@@ -83,3 +83,23 @@
 .gold-button:active {
   transform: translateY(0);
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #customer-receipt,
+  #customer-receipt * {
+    visibility: visible;
+  }
+  #customer-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+}

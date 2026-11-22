@@ -551,11 +551,25 @@ export class ApiClient {
 
   // Settings
   static async getSettings() {
-    return this.request('/settings');
+    try {
+      const res = await this.request('/settings');
+      if (res && (res.pricingRules || res.depositConfig)) return res;
+    } catch {}
+
+    try {
+      const local = await fetch('/api/settings').then((r) => r.json());
+      if (local && (local.pricingRules || local.depositConfig)) return local;
+    } catch {}
+
+    return {};
   }
 
   static async getPublicSettings() {
-    return this.request('/settings/public');
+    try {
+      return await this.request('/settings/public');
+    } catch {
+      return fetch('/api/settings').then((r) => r.json()).catch(() => ({}));
+    }
   }
 
   static async getCategoryDriverIds(category: string) {
@@ -570,17 +584,35 @@ export class ApiClient {
   }
 
   static async updateDepositConfig(dto: any) {
-    return this.request('/settings/deposit', {
-      method: 'PATCH',
-      body: JSON.stringify(dto),
-    });
+    try {
+      return await this.request('/settings/deposit', {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      });
+    } catch {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'deposit', data: dto }),
+      });
+      return res.json();
+    }
   }
 
   static async updatePricingRules(dto: any) {
-    return this.request('/settings/pricing', {
-      method: 'PATCH',
-      body: JSON.stringify(dto),
-    });
+    try {
+      return await this.request('/settings/pricing', {
+        method: 'PATCH',
+        body: JSON.stringify(dto),
+      });
+    } catch {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'pricing', data: dto }),
+      });
+      return res.json();
+    }
   }
 
   static async updateDispatchConfig(dto: any) {
@@ -732,5 +764,58 @@ export class ApiClient {
       },
       true,
     );
+  }
+
+  // Customer Reviews Management (Admin)
+  static async getReviews(isAdmin = true) {
+    const adminToken = this.getAdminToken();
+    const headers: Record<string, string> = {};
+    if (adminToken) {
+      headers['Authorization'] = `Bearer ${adminToken}`;
+    }
+    const res = await fetch(`/api/reviews?admin=${isAdmin}`, {
+      headers,
+    });
+    if (!res.ok) {
+      throw new Error('Failed to fetch reviews');
+    }
+    return res.json();
+  }
+
+  static async updateReview(id: string, payload: any) {
+    const adminToken = this.getAdminToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (adminToken) {
+      headers['Authorization'] = `Bearer ${adminToken}`;
+    }
+    const res = await fetch('/api/reviews', {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ id, ...payload }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to update review');
+    }
+    return res.json();
+  }
+
+  static async deleteReview(id: string) {
+    const adminToken = this.getAdminToken();
+    const headers: Record<string, string> = {};
+    if (adminToken) {
+      headers['Authorization'] = `Bearer ${adminToken}`;
+    }
+    const res = await fetch(`/api/reviews?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      headers,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to delete review');
+    }
+    return res.json();
   }
 }

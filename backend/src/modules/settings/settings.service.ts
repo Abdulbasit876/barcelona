@@ -21,15 +21,57 @@ export interface DepositConfig {
 }
 
 export interface PricingRulesConfig {
+  // 1. Airport Transfers (AMB Zone Reference)
+  airport_metropolitan_km_rate: number;
+  airport_outside_km_rate?: number;
+  airport_minimum_fare?: number;
+  free_waiting_mins_airport: number;
+
+  // 2. City Point-to-Point Transfers
   city_base_fare: number;
   city_base_threshold_km: number;
   city_per_km_rate: number;
+  free_waiting_mins_standard: number;
+
+  // 3. Cruise Port Transfers
+  cruise_port_sedan_base?: number;
+  cruise_port_van_fixed?: number;
+  free_waiting_mins_port?: number;
+
+  // 4. Sants Train Station Transfers
+  sants_station_sedan_base?: number;
+  sants_station_van_fixed?: number;
+  free_waiting_mins_sants?: number;
+
+  // 5. Sightseeing Tours & Hourly Chauffeur
+  city_tour_hourly_rate?: number;
+  company_trip_hourly_rate: number;
+  city_tour_min_hours?: number;
+  free_waiting_mins_tour?: number;
+
+  // 6. Vehicle Category Surcharges
+  surcharge_economy?: number;
+  surcharge_standard?: number;
+  surcharge_premium?: number;
+  surcharge_standard_van?: number;
+  surcharge_premium_van?: number;
+  surcharge_electric?: number;
+
+  // 7. Child Safety Seats & Extras
   baby_seat_price: number;
   baby_booster_price: number;
-  airport_metropolitan_km_rate: number;
-  company_trip_hourly_rate: number;
-  free_waiting_mins_standard: number;
-  free_waiting_mins_airport: number;
+
+  // 8. Payment & Online Deposit Rules
+  deposit_percentage?: number;
+  minimum_deposit_eur?: number;
+  allow_cash_balance?: boolean;
+  allow_full_online_payment?: boolean;
+
+  // 9. Overtime & Night Hours
+  overtime_enabled?: boolean;
+  overtime_start_hour?: number;
+  overtime_end_hour?: number;
+  overtime_surcharge_percent?: number;
 }
 
 export interface DispatchConfig {
@@ -47,8 +89,8 @@ export interface DispatchConfig {
 export class SettingsService {
   private readonly logger = new Logger(SettingsService.name);
 
-  // In-memory persistent cache backed by Supabase audit_logs
-  private settingsCache: Record<string, any> = {};
+  // In-memory persistent cache backed by Supabase audit_logs with TTL
+  private settingsCache: Record<string, { value: any; expiresAt: number }> = {};
 
   private defaultDepositConfig: DepositConfig = {
     deposit_percentage: 20,
@@ -101,15 +143,57 @@ export class SettingsService {
   };
 
   private defaultPricingRules: PricingRulesConfig = {
+    // Airport Transfers
+    airport_metropolitan_km_rate: 3.0,
+    airport_outside_km_rate: 2.5,
+    airport_minimum_fare: 35.0,
+    free_waiting_mins_airport: 60,
+
+    // City Transfers
     city_base_fare: 25.0,
     city_base_threshold_km: 2.5,
     city_per_km_rate: 3.0,
+    free_waiting_mins_standard: 15,
+
+    // Cruise Port Transfers
+    cruise_port_sedan_base: 42.0,
+    cruise_port_van_fixed: 70.0,
+    free_waiting_mins_port: 30,
+
+    // Sants Train Station Transfers
+    sants_station_sedan_base: 32.0,
+    sants_station_van_fixed: 45.0,
+    free_waiting_mins_sants: 15,
+
+    // City Tour & Hourly Chauffeur
+    city_tour_hourly_rate: 65.0,
+    company_trip_hourly_rate: 65.0,
+    city_tour_min_hours: 2,
+    free_waiting_mins_tour: 15,
+
+    // Vehicle Category Surcharges
+    surcharge_economy: 0.0,
+    surcharge_standard: 5.0,
+    surcharge_premium: 10.0,
+    surcharge_standard_van: 15.0,
+    surcharge_premium_van: 22.5,
+    surcharge_electric: 12.0,
+
+    // Child Safety Seats
     baby_seat_price: 9.0,
     baby_booster_price: 4.5,
-    airport_metropolitan_km_rate: 3.0,
-    company_trip_hourly_rate: 65.0,
-    free_waiting_mins_standard: 15,
-    free_waiting_mins_airport: 60,
+
+    // Payment & Online Deposit Rules
+    deposit_percentage: 20,
+    minimum_deposit_eur: 10,
+    allow_cash_balance: true,
+    allow_full_online_payment: true,
+
+    // Overtime / Night Hours
+    overtime_enabled: false,
+    overtime_start_hour: 22,
+    overtime_end_hour: 6,
+    overtime_surcharge_percent: 20,
   };
 
   private defaultDispatchConfig: DispatchConfig = {
@@ -128,9 +212,11 @@ export class SettingsService {
   /**
    * Helper to retrieve persistent settings from Supabase audit_logs JSONB storage
    */
-  private async readPersistedSetting<T>(key: string, defaultValue: T): Promise<T> {
-    if (this.settingsCache[key]) {
-      return this.settingsCache[key];
+  private async readPersistedSetting<T>(key: string, defaultValue: T, forceRefresh = false): Promise<T> {
+    const cached = this.settingsCache[key];
+    const now = Date.now();
+    if (!forceRefresh && cached && now < cached.expiresAt) {
+      return cached.value as T;
     }
 
     try {
@@ -145,14 +231,14 @@ export class SettingsService {
         .maybeSingle();
 
       if (!error && data?.metadata?.value) {
-        this.settingsCache[key] = data.metadata.value;
+        this.settingsCache[key] = { value: data.metadata.value, expiresAt: now + 5000 };
         return data.metadata.value as T;
       }
     } catch (err) {
       this.logger.warn(`Could not read persisted setting for ${key}: ${err}`);
     }
 
-    this.settingsCache[key] = defaultValue;
+    this.settingsCache[key] = { value: defaultValue, expiresAt: now + 5000 };
     return defaultValue;
   }
 
@@ -160,7 +246,7 @@ export class SettingsService {
    * Helper to persist setting permanently to Supabase audit_logs JSONB storage
    */
   private async writePersistedSetting<T>(key: string, value: T): Promise<T> {
-    this.settingsCache[key] = value;
+    this.settingsCache[key] = { value, expiresAt: Date.now() + 60000 };
 
     try {
       // Clean previous row to keep database tidy
@@ -205,8 +291,8 @@ export class SettingsService {
     };
   }
 
-  async getDepositConfig(): Promise<DepositConfig> {
-    return this.readPersistedSetting<DepositConfig>('deposit_config', this.defaultDepositConfig);
+  async getDepositConfig(forceRefresh = false): Promise<DepositConfig> {
+    return this.readPersistedSetting<DepositConfig>('deposit_config', this.defaultDepositConfig, forceRefresh);
   }
 
   async updateDepositConfig(config: Partial<DepositConfig>) {
@@ -223,8 +309,12 @@ export class SettingsService {
     return this.writePersistedSetting<DepositConfig>('deposit_config', updated);
   }
 
-  async getPricingRules(): Promise<PricingRulesConfig> {
-    return this.readPersistedSetting<PricingRulesConfig>('pricing_rules', this.defaultPricingRules);
+  async getPricingRules(forceRefresh = false): Promise<PricingRulesConfig> {
+    return this.readPersistedSetting<PricingRulesConfig>('pricing_rules', this.defaultPricingRules, forceRefresh);
+  }
+
+  getPricingRulesSync(): PricingRulesConfig {
+    return this.settingsCache['pricing_rules']?.value || this.defaultPricingRules;
   }
 
   async updatePricingRules(rules: Partial<PricingRulesConfig>) {

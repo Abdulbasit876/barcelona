@@ -27,6 +27,7 @@ import {
   PricingBreakdown,
   PRICING_CONFIG,
   SEED_VEHICLES,
+  classifyBarcelonaZone,
 } from '@barcelona/shared';
 import VehicleImageCarousel from '../../../components/VehicleImageCarousel';
 import PlacesAutocomplete, { PlaceSelection } from '../../../components/PlacesAutocomplete';
@@ -115,17 +116,47 @@ export default function BookTransferPage({
   const [calculatedKm, setCalculatedKm] = useState<number>(18);
   const [isCalculatingDistance, setIsCalculatingDistance] = useState<boolean>(false);
   const [depositPercentage, setDepositPercentage] = useState<number>(20);
+  const [pricingRules, setPricingRules] = useState<any>(null);
 
-  // Fetch admin-configured deposit percentage from settings
+  // Helper to get category surcharge from live admin pricing rules or fallback
+  const getVehicleSurcharge = (cat?: VehicleCategory | null): number => {
+    if (!cat) return 0;
+    if (pricingRules) {
+      switch (cat) {
+        case VehicleCategory.ECONOMY:
+          return pricingRules.surcharge_economy ?? 0;
+        case VehicleCategory.STANDARD:
+          return pricingRules.surcharge_standard ?? 5;
+        case VehicleCategory.PREMIUM:
+          return pricingRules.surcharge_premium ?? 10;
+        case VehicleCategory.STANDARD_VAN:
+          return pricingRules.surcharge_standard_van ?? 15;
+        case VehicleCategory.PREMIUM_VAN:
+          return pricingRules.surcharge_premium_van ?? 22.5;
+        case VehicleCategory.ELECTRIC:
+          return pricingRules.surcharge_electric ?? 12;
+        default:
+          return PRICING_CONFIG.CATEGORY_SURCHARGES[cat] || 0;
+      }
+    }
+    return PRICING_CONFIG.CATEGORY_SURCHARGES[cat] || 0;
+  };
+
+  // Fetch admin-configured settings (deposit percentage and full pricing rules)
   useEffect(() => {
     fetch('/api/settings')
       .then((r) => r.json())
       .then((data) => {
-        if (data && typeof data.deposit_percentage === 'number') {
-          setDepositPercentage(data.deposit_percentage);
+        if (data) {
+          if (typeof data.deposit_percentage === 'number') {
+            setDepositPercentage(data.deposit_percentage);
+          }
+          if (data.pricingRules) {
+            setPricingRules(data.pricingRules);
+          }
         }
       })
-      .catch((err) => console.warn('Could not load deposit settings:', err));
+      .catch((err) => console.warn('Could not load settings:', err));
   }, []);
 
   // Auto-calculate exact driving distance via Google Distance Matrix / Real Road Route Engine
@@ -153,51 +184,82 @@ export default function BookTransferPage({
     };
   }, [pickupAddress, destinationAddress, pickupCoords, destCoords]);
 
-  // Auto-calculate pricing when journey details, distance, or vehicle changes
+  // Auto-calculate pricing when journey details, distance, vehicle, or pricing rules change
   useEffect(() => {
     calculateFare(selectedCategory);
-  }, [transferType, selectedCategory, passengers, luggage, babyBoosters, babySeats, destinationAddress, pickupAddress, calculatedKm]);
+  }, [transferType, selectedCategory, passengers, luggage, babyBoosters, babySeats, destinationAddress, pickupAddress, calculatedKm, pricingRules]);
 
   const calculateFare = (category?: VehicleCategory | null) => {
-    const isMetro =
-      !destinationAddress.toLowerCase().includes('girona') &&
-      !destinationAddress.toLowerCase().includes('tarragona') &&
-      !destinationAddress.toLowerCase().includes('costa brava');
+    const pickupZone = classifyBarcelonaZone(pickupAddress, pickupCoords);
+    const destZone = classifyBarcelonaZone(destinationAddress, destCoords);
+    const isMetro = pickupZone === 'RED_ZONE' && destZone === 'RED_ZONE';
 
     const distanceKm = calculatedKm || 18; // Exact driving km calculated via Google Distance Matrix
     const freeWait =
       transferType === TransferType.AIRPORT
-        ? 60
+        ? (pricingRules?.free_waiting_mins_airport ?? 60)
         : transferType === TransferType.CRUISE_PORT
-        ? 30
-        : 15;
+        ? (pricingRules?.free_waiting_mins_port ?? 30)
+        : transferType === TransferType.SANTS_STATION
+        ? (pricingRules?.free_waiting_mins_sants ?? 15)
+        : transferType === TransferType.CITY_TOUR
+        ? (pricingRules?.free_waiting_mins_tour ?? 15)
+        : (pricingRules?.free_waiting_mins_standard ?? 15);
 
     let baseFare = 0;
     let vehicleSurcharge = 0;
     let requiresAdminApproval = false;
     let pricingRuleApplied = '';
 
-    // Calculate optional extras
-    const additionalCharges = (babyBoosters * 4.5) + (babySeats * 9.0);
+    // Calculate optional extras from live admin prices
+    const babySeatPrice = pricingRules?.baby_seat_price ?? 9.0;
+    const babyBoosterPrice = pricingRules?.baby_booster_price ?? 4.5;
+    const additionalCharges = (babyBoosters * babyBoosterPrice) + (babySeats * babySeatPrice);
 
     if (transferType === TransferType.AIRPORT) {
-      const perKm = isMetro ? 3.0 : 2.5;
-      baseFare = Math.max(35, distanceKm * perKm);
-      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
-      pricingRuleApplied = 'Airport Guaranteed Transfer';
+      const metroRate = pricingRules?.airport_metropolitan_km_rate ?? PRICING_CONFIG.AIRPORT.METROPOLITAN_PER_KM ?? 3.0;
+      const outsideRate = pricingRules?.airport_outside_km_rate ?? PRICING_CONFIG.AIRPORT.OUTSIDE_METROPOLITAN_PER_KM ?? 2.5;
+      let perKm = outsideRate;
+
+      if (pickupZone === 'RED_ZONE' && destZone === 'RED_ZONE') {
+        // 1. Within Barcelona City (Red Zone)
+        perKm = metroRate;
+        pricingRuleApplied = `Airport Transfer - Within Barcelona (Red Zone) (€${perKm.toFixed(2)}/km)`;
+      } else if (
+        (pickupZone === 'RED_ZONE' && destZone === 'OUTSIDE_ZONE') ||
+        (pickupZone === 'OUTSIDE_ZONE' && destZone === 'RED_ZONE')
+      ) {
+        // 2. Barcelona (Red Zone) ⇄ Outside Barcelona (Yellow/Green Zones) in both directions
+        perKm = outsideRate;
+        pricingRuleApplied = `Airport Transfer - Barcelona (Red Zone) ⇄ Outside (Yellow/Green Zones) (€${perKm.toFixed(2)}/km)`;
+      } else if (pickupZone === 'OUTSIDE_ZONE' && destZone === 'OUTSIDE_ZONE') {
+        // 3. Outside Barcelona ⇄ Outside Barcelona
+        perKm = outsideRate;
+        pricingRuleApplied = `Airport Transfer - Outside Metropolitan (Yellow/Green Zones) (€${perKm.toFixed(2)}/km)`;
+      } else {
+        requiresAdminApproval = true;
+        perKm = outsideRate;
+        pricingRuleApplied = `Airport Transfer - Unverified Zone Flagged for Review (€${perKm.toFixed(2)}/km)`;
+      }
+
+      const minimumAirportFare = pricingRules?.airport_minimum_fare ?? PRICING_CONFIG.AIRPORT.MINIMUM_FARE ?? 35.0;
+      baseFare = Math.max(minimumAirportFare, Math.round(distanceKm * perKm * 100) / 100);
+      vehicleSurcharge = getVehicleSurcharge(category);
     } else if (transferType === TransferType.CRUISE_PORT) {
       requiresAdminApproval = true;
       const isVan =
         passengers > 4 ||
         category === VehicleCategory.STANDARD_VAN ||
         category === VehicleCategory.PREMIUM_VAN;
+      const portVanFixed = pricingRules?.cruise_port_van_fixed ?? 70.0;
+      const portSedanBase = pricingRules?.cruise_port_sedan_base ?? 42.0;
       if (isVan) {
-        baseFare = 70.0;
+        baseFare = portVanFixed;
         vehicleSurcharge = 0;
         pricingRuleApplied = 'Cruise Port Transfer';
       } else {
-        baseFare = 42.0;
-        vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
+        baseFare = portSedanBase;
+        vehicleSurcharge = getVehicleSurcharge(category);
         pricingRuleApplied = 'Cruise Port Transfer';
       }
     } else if (transferType === TransferType.SANTS_STATION) {
@@ -206,30 +268,37 @@ export default function BookTransferPage({
         passengers > 4 ||
         category === VehicleCategory.STANDARD_VAN ||
         category === VehicleCategory.PREMIUM_VAN;
+      const santsVanFixed = pricingRules?.sants_station_van_fixed ?? 45.0;
+      const santsSedanBase = pricingRules?.sants_station_sedan_base ?? 32.0;
       if (isVan) {
-        baseFare = 45.0;
+        baseFare = santsVanFixed;
         vehicleSurcharge = 0;
         pricingRuleApplied = 'Sants Station Transfer';
       } else {
-        baseFare = 32.0;
-        vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
+        baseFare = santsSedanBase;
+        vehicleSurcharge = getVehicleSurcharge(category);
         pricingRuleApplied = 'Sants Station Transfer';
       }
     } else if (transferType === TransferType.CITY_TOUR) {
-      baseFare = 3 * 65.0; // 3-hour minimum tour at €65/hr
-      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
-      pricingRuleApplied = 'Barcelona Private Sightseeing Tour (3 hrs)';
+      const tourHourly = pricingRules?.city_tour_hourly_rate ?? 65.0;
+      const tourMinHours = pricingRules?.city_tour_min_hours ?? 3;
+      baseFare = tourMinHours * tourHourly;
+      vehicleSurcharge = getVehicleSurcharge(category);
+      pricingRuleApplied = `Barcelona Private Sightseeing Tour (${tourMinHours} hrs)`;
     } else {
       // CITY_TRANSFER: Inside city / distance-based point-to-point transfer
-      // distance <= 2.5 km -> €25
-      // distance > 2.5 km -> €25 + €3 for every additional km
+      // distance <= base_threshold -> city_base_fare
+      // distance > base_threshold -> city_base_fare + per_km_rate for excess
+      const cityBase = pricingRules?.city_base_fare ?? 25.0;
+      const cityThreshold = pricingRules?.city_base_threshold_km ?? 2.5;
+      const cityPerKm = pricingRules?.city_per_km_rate ?? 3.0;
       const cityDistanceKm = distanceKm;
-      if (cityDistanceKm <= 2.5) {
-        baseFare = 25.0;
+      if (cityDistanceKm <= cityThreshold) {
+        baseFare = cityBase;
       } else {
-        baseFare = Math.round((25.0 + (cityDistanceKm - 2.5) * 3.0) * 100) / 100;
+        baseFare = Math.round((cityBase + (cityDistanceKm - cityThreshold) * cityPerKm) * 100) / 100;
       }
-      vehicleSurcharge = category ? (PRICING_CONFIG.CATEGORY_SURCHARGES[category] || 0) : 0;
+      vehicleSurcharge = getVehicleSurcharge(category);
       pricingRuleApplied = 'Barcelona City Regulated Transfer';
     }
 
@@ -321,6 +390,7 @@ export default function BookTransferPage({
         cruiseShipName,
         specialRequests,
         preferredLanguage: locale || 'en',
+        distanceKm: calculatedKm || 18,
         baseFare: pricingBreakdown?.baseFare || 45,
         vehicleSurcharge: pricingBreakdown?.vehicleSurcharge || 0,
         totalFare: pricingBreakdown?.totalFare || 54,
@@ -1013,7 +1083,7 @@ export default function BookTransferPage({
                   <div className="pt-3 border-t border-[#CFE7F5] flex items-center justify-between text-xs">
                     <span className="text-[#0F2346]/60">Class Surcharge:</span>
                     <span className="font-bold text-gold-700">
-                      {v.categorySurcharge > 0 ? `+€${v.categorySurcharge.toFixed(2)}` : '€0.00 Included'}
+                      {getVehicleSurcharge(v.category) > 0 ? `+€${getVehicleSurcharge(v.category).toFixed(2)}` : '€0.00 Included'}
                     </span>
                   </div>
                 </div>

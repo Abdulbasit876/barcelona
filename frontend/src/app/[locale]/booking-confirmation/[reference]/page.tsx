@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Link } from '../../../../navigation';
 import { BookingStatus, PaymentStatus } from '@barcelona/shared';
+import BookingReceiptModal, { normalizeBookingData } from '@/components/BookingReceiptModal';
 
 export default function BookingConfirmationPage({
   params: { locale, reference },
@@ -35,6 +36,7 @@ export default function BookingConfirmationPage({
 }) {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
+  const emailParam = searchParams.get('email') || '';
   const isMockPayment = searchParams.get('mock_payment') === 'true';
   const paymentSuccess = searchParams.get('payment_success') === 'true';
 
@@ -68,11 +70,14 @@ export default function BookingConfirmationPage({
 
   const fetchBooking = async () => {
     try {
-      const res = await fetch(`/api/bookings?reference=${reference}&token=${token}`);
+      const tokenQuery = token ? `&token=${encodeURIComponent(token.trim())}` : '';
+      const emailQuery = emailParam ? `&contact=${encodeURIComponent(emailParam.trim())}` : '';
+      const res = await fetch(`/api/bookings?reference=${encodeURIComponent(reference.trim())}${tokenQuery}${emailQuery}`);
       if (res.ok) {
         const data = await res.json();
-        setBooking(data);
-        if (data.payment_status === 'PAID' || data.paymentStatus === 'PAID') {
+        const norm = normalizeBookingData(data);
+        setBooking(norm);
+        if (norm.paymentStatus === 'PAID' || norm.balancePaid) {
           setIsPaid(true);
         }
         setLoading(false);
@@ -88,8 +93,9 @@ export default function BookingConfirmationPage({
         const res = await fetch(`${apiBase}/bookings/lookup/${reference}?token=${token}`);
         if (res.ok) {
           const data = await res.json();
-          setBooking(data);
-          if (data.paymentStatus === PaymentStatus.PAID) {
+          const norm = normalizeBookingData(data);
+          setBooking(norm);
+          if (norm.paymentStatus === 'PAID' || norm.balancePaid) {
             setIsPaid(true);
           }
           setLoading(false);
@@ -106,8 +112,9 @@ export default function BookingConfirmationPage({
         const local = localStorage.getItem(`barcelona_booking_${reference}`) || localStorage.getItem('barcelona_last_booking');
         if (local) {
           const parsed = JSON.parse(local);
-          setBooking(parsed);
-          setIsPaid(parsed.paymentStatus === 'PAID' || paymentSuccess || isMockPayment);
+          const norm = normalizeBookingData(parsed);
+          setBooking(norm);
+          setIsPaid(norm.balancePaid || norm.paymentStatus === 'PAID' || paymentSuccess || isMockPayment);
         }
       } catch (err) {
         console.error(err);
@@ -474,175 +481,11 @@ export default function BookingConfirmationPage({
       )}
 
       {/* Customer Receipt Modal (Printable & Downloadable) */}
-      {showReceiptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/85 backdrop-blur-md overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl text-gray-800 p-6 sm:p-8 space-y-6 my-8 animate-in fade-in zoom-in-95">
-            {/* Modal Controls */}
-            <div className="flex items-center justify-between border-b pb-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-navy-950 flex items-center justify-center text-gold-400">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <h3 className="text-lg font-bold text-navy-950">Official Customer Receipt</h3>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs font-semibold text-gray-700 flex items-center space-x-1.5 transition-colors"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  <span>Print</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowReceiptModal(false)}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Printable Receipt Content */}
-            <div id="customer-receipt" className="space-y-6 text-sm">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="relative w-48 h-14 mb-2">
-                    <Image
-                      src="/A.png"
-                      alt="Barcelona Taxi Transfer"
-                      fill
-                      className="object-contain object-left"
-                      priority
-                    />
-                  </div>
-                  <h2 className="text-xl font-black text-navy-950 tracking-tight">
-                    Barcelona<span className="text-[#c48e3a]">Taxi</span>Transfer
-                  </h2>
-                  <p className="text-xs text-gray-500 mt-0.5">Premier Chauffeur & Private Airport Transfers</p>
-                  <p className="text-xs text-gray-500">VAT ID: ES-B88291048 | Barcelona, Spain</p>
-                  <p className="text-xs text-gray-500">Phone: +34 602 194 060 (Waqas)</p>
-                  <p className="text-xs text-gray-500">Email: bookings.barcelonataxitransfer@gmail.com</p>
-                </div>
-                <div className="text-right">
-                  <span className="inline-block px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-                    Paid in Full
-                  </span>
-                  <div className="mt-2 text-xs text-gray-500">
-                    <div>Receipt Date: {new Date().toLocaleDateString()}</div>
-                    <div>Payment Method: Card (**** 4242)</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-gray-50 border border-gray-200 text-xs">
-                <div>
-                  <span className="text-gray-400 uppercase font-bold tracking-wider block mb-1">
-                    Booking Reference
-                  </span>
-                  <span className="font-mono text-base font-bold text-navy-950">{reference}</span>
-                  <div className="mt-2 text-gray-600">
-                    <strong>Service Type:</strong> {booking?.transferType || 'AIRPORT'} Transfer
-                  </div>
-                  <div className="text-gray-600">
-                    <strong>Vehicle Class:</strong> {booking?.vehicleCategory || 'STANDARD'}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-gray-400 uppercase font-bold tracking-wider block mb-1">
-                    Billed To
-                  </span>
-                  <div className="font-bold text-navy-950 text-sm">
-                    {booking?.customerName || cardName || 'Valued Guest'}
-                  </div>
-                  <div className="text-gray-600">{booking?.customerEmail || 'customer@example.com'}</div>
-                  <div className="text-gray-600">{booking?.customerPhone || '+34 600 000 000'}</div>
-                </div>
-              </div>
-
-              {/* Itinerary details */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-100 border-b border-gray-200 text-gray-600 font-semibold">
-                    <tr>
-                      <th className="p-3">Route & Schedule Details</th>
-                      <th className="p-3 text-right">Details</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 text-gray-700">
-                    <tr>
-                      <td className="p-3 font-medium">Pickup Location</td>
-                      <td className="p-3 text-right font-medium text-navy-950">
-                        {booking?.pickupAddress || 'Barcelona El Prat Airport (BCN)'}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-medium">Drop-off Destination</td>
-                      <td className="p-3 text-right font-medium text-navy-950">
-                        {booking?.destinationAddress || 'Hotel Arts Barcelona'}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-medium">Scheduled Date & Time</td>
-                      <td className="p-3 text-right text-navy-950 font-medium">
-                        {booking?.pickupDate || 'Today'} at {booking?.pickupTime || '12:00'}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="p-3 font-medium">Passengers / Luggage</td>
-                      <td className="p-3 text-right text-navy-950">
-                        {booking?.passengers || 2} Passengers, {booking?.luggage || 2} Suitcases, {booking?.flight_details?.cabin_luggage ?? booking?.cabinLuggage ?? booking?.cabin_luggage ?? 0} Cabin Bags
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pricing breakdown summary */}
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between text-xs text-gray-600">
-                  <span>Base Transfer Fare</span>
-                  <span>€{((booking?.fareBreakdown?.totalFare || 48.5) - 5).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-xs text-gray-600">
-                  <span>Vehicle Class & Disinfection Fee</span>
-                  <span>€5.00</span>
-                </div>
-                <div className="flex justify-between text-xs text-gray-600">
-                  <span>Tolls, Airport Access & Waiting Time</span>
-                  <span className="text-emerald-600 font-semibold">Included (€0.00)</span>
-                </div>
-                <div className="flex justify-between text-base font-bold text-navy-950 pt-2 border-t border-gray-300">
-                  <span>Total Paid (EUR)</span>
-                  <span className="text-[#c48e3a] text-xl">
-                    €{(booking?.fareBreakdown?.totalFare || 48.5).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Action buttons inside modal */}
-            <div className="pt-4 border-t flex items-center justify-end space-x-3">
-              <button
-                type="button"
-                onClick={() => setShowReceiptModal(false)}
-                className="px-5 py-2.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="px-6 py-2.5 rounded-xl bg-navy-950 text-white hover:bg-navy-900 text-xs font-bold flex items-center space-x-2 shadow-md transition-all"
-              >
-                <Download className="w-4 h-4 text-gold-400" />
-                <span>Save / Print PDF</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <BookingReceiptModal
+        isOpen={showReceiptModal}
+        onClose={() => setShowReceiptModal(false)}
+        booking={booking}
+      />
     </div>
   );
 }

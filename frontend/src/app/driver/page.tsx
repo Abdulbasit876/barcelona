@@ -1083,7 +1083,7 @@ export default function DriverPortalPage() {
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200">
                   <div>
                     <div className="font-black text-slate-900 text-sm">BARCELONA TAXI TRANSFER</div>
-                    <div className="text-[10px] text-slate-500">Official Regulated Private Chauffeur</div>
+                    <div className="text-[10px] text-slate-500">Official Regulated Private Chauffeur • VAT ID: ES60064588L • Phone: +34 687433263</div>
                   </div>
                   <div className="text-right">
                     <div className="font-mono font-bold text-slate-800">{bookingRef}</div>

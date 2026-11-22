@@ -94,7 +94,7 @@ export class BookingsService {
       }
     }
 
-    // Backend calculates pricing as sole authority
+    // Backend calculates pricing as sole authority using live admin rules
     const pricingBreakdown = this.pricingService.calculatePrice({
       transferType: dto.transferType,
       vehicleCategory: dto.vehicleCategory,
@@ -103,6 +103,7 @@ export class BookingsService {
       passengers: dto.passengers,
       luggage: dto.luggage,
       durationHours: dto.tourDurationHours || 3,
+      distanceKm: dto.distanceKm,
     });
 
     const accessToken = crypto.randomBytes(32).toString('hex');

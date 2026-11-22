@@ -276,13 +276,15 @@ CREATE POLICY "Public can view famous places" ON public.famous_places FOR SELECT
 DROP POLICY IF EXISTS "Service role full access famous_places" ON public.famous_places;
 CREATE POLICY "Service role full access famous_places" ON public.famous_places FOR ALL USING (true);
 
--- Reviews: public read and insert, service role full access
+-- Reviews: public read and insert, service role & authenticated admin full access (edit/delete)
 DROP POLICY IF EXISTS "Public can view reviews" ON public.reviews;
 CREATE POLICY "Public can view reviews" ON public.reviews FOR SELECT USING (is_published = true);
 DROP POLICY IF EXISTS "Public can submit reviews" ON public.reviews;
 CREATE POLICY "Public can submit reviews" ON public.reviews FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Service role full access reviews" ON public.reviews;
-CREATE POLICY "Service role full access reviews" ON public.reviews FOR ALL USING (true);
+CREATE POLICY "Service role full access reviews" ON public.reviews FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated admins full access reviews" ON public.reviews;
+CREATE POLICY "Authenticated admins full access reviews" ON public.reviews FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Bookings: public insert (to create bookings), public select (for lookup), service full
 DROP POLICY IF EXISTS "Public can create bookings" ON public.bookings;

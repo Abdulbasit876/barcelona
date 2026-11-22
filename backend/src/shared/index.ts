@@ -108,6 +108,7 @@ export interface CreateBookingDto {
   specialRequests?: string;
   preferredLanguage: Locale;
   tourDurationHours?: number;
+  distanceKm?: number;
 }
 
 export interface BookingResponse {
@@ -202,9 +203,11 @@ export interface CustomQuoteRequestDto {
 
 export const PRICING_CONFIG = {
   AIRPORT: {
-    METROPOLITAN_PER_KM: 3.0,
-    OUTSIDE_METROPOLITAN_PER_KM: 2.5,
-    FREE_WAITING_MINS: 60,
+    METROPOLITAN_PER_KM: 3.0, // Barcelona City (Red Zone): €3.00/km
+    OUTSIDE_METROPOLITAN_PER_KM: 2.5, // Outside Barcelona (Yellow & Light Green Zones): €2.50/km
+    MINIMUM_FARE: 35.0, // Minimum fare threshold: €35.00
+    FREE_WAITING_MINS: 60, // 60 minutes complimentary waiting time
+    FLIGHT_TRACKING_INCLUDED: true, // Automated flight tracking
   },
   CRUISE_PORT: {
     SEDAN_BASE: 42.0,
@@ -250,6 +253,130 @@ export const PRICING_CONFIG = {
     [VehicleCategory.LARGE_GROUP]: 0.0, // On request / custom quote
   },
 };
+
+export type BarcelonaZone = 'RED_ZONE' | 'OUTSIDE_ZONE' | 'AMBIGUOUS';
+
+export const OUTSIDE_BARCELONA_MUNICIPALITIES = [
+  // Yellow Zone (Official AMB Map):
+  'el prat de llobregat', 'el prat',
+  "l'hospitalet de llobregat", 'hospitalet de llobregat', "l'hospitalet", 'hospitalet',
+  'cornellà de llobregat', 'cornella de llobregat', 'cornellà', 'cornella',
+  'sant boi de llobregat', 'sant boi',
+  'viladecans',
+  'gavà', 'gava',
+  'castelldefels',
+  'esplugues de llobregat', 'esplugues',
+  'sant just desvern',
+  'sant joan despí', 'sant joan despi',
+  'sant feliu de llobregat', 'sant feliu',
+  'molins de rei',
+  'pallejà', 'palleja',
+  'sant vicenç dels horts', 'sant vicenc dels horts',
+  'sant andreu de la barca',
+  'castellbisbal',
+  'corbera de llobregat', 'corbera',
+  'sant cugat del vallès', 'sant cugat del valles', 'sant cugat',
+  'cerdanyola del vallès', 'cerdanyola del valles', 'cerdanyola',
+  'ripollet',
+  'barberà del vallès', 'barbera del valles', 'barberà', 'barbera',
+  'badia del vallès', 'badia del valles', 'badia',
+  'montcada i reixac', 'montcada',
+  'montgat',
+
+  // Light Green Zone (Official AMB Map):
+  'begues',
+  'torrelles de llobregat', 'torrelles',
+  'sant climent de llobregat', 'sant climent',
+  'santa coloma de cervelló', 'santa coloma de cervello',
+  'cervelló', 'cervello',
+  'la palma de cervelló', 'la palma de cervello',
+  'el papiol',
+  'tiana',
+
+  // Adjacent / Outer areas outside Barcelona city:
+  'badalona',
+  'santa coloma de gramenet',
+  'sant adrià de besòs', 'sant adria de besos', 'sant adrià', 'sant adria',
+  'sitges', 'sabadell', 'terrassa', 'mataró', 'mataro',
+  'girona', 'tarragona', 'costa brava', 'salou', 'lloret de mar', 'blanes', 'manresa', 'vic'
+];
+
+export function classifyBarcelonaZone(
+  address?: string | null,
+  coords?: { lat: number; lng: number } | null,
+): BarcelonaZone {
+  if (!address || typeof address !== 'string' || address.trim().length === 0) {
+    return 'AMBIGUOUS';
+  }
+
+  const raw = address.toLowerCase().trim();
+
+  // 1. Airport keywords (El Prat de Llobregat = Yellow Zone / OUTSIDE_ZONE)
+  if (
+    /\b(bcn|aeroport|aeropuerto|airport|el prat de llobregat|josep tarradellas|terminal 1|terminal 2|t1|t2)\b/.test(raw) ||
+    /\b08820\b/.test(raw)
+  ) {
+    return 'OUTSIDE_ZONE';
+  }
+
+  // 2. Municipalities outside Barcelona City (Yellow & Light Green Zones)
+  for (const muni of OUTSIDE_BARCELONA_MUNICIPALITIES) {
+    if (raw.includes(muni)) {
+      return 'OUTSIDE_ZONE';
+    }
+  }
+
+  // Postal codes outside Barcelona city (088xx, 089xx, 081xx, 082xx, 083xx, 084xx, 085xx, etc.)
+  if (/\b08[1-9]\d{2}\b/.test(raw) || /\b080[5-9]\d\b/.test(raw) || /\b0804[3-9]\b/.test(raw)) {
+    return 'OUTSIDE_ZONE';
+  }
+
+  // 3. Barcelona City (Red Zone) postal codes (08001 through 08042)
+  if (/\b(0800[1-9]|080[1-3][0-9]|0804[0-2])\b/.test(raw)) {
+    return 'RED_ZONE';
+  }
+
+  // Known Barcelona City districts, neighborhoods & landmarks
+  const barcelonaCityLandmarks = [
+    'plaça de catalunya', 'plaza catalunya', 'plaça catalunya', 'placa catalunya',
+    'passeig de gràcia', 'passeig de gracia', 'paseo de gracia',
+    'sagrada família', 'sagrada familia',
+    'las ramblas', 'la rambla', 'les rambles',
+    'ciutat vella', 'barri gòtic', 'barri gotic', 'barrio gotico', 'barrio gótico', 'el born', 'el raval', 'la barceloneta', 'barceloneta',
+    'eixample', 'dreta de l\'eixample', 'esquerra de l\'eixample', 'sant antoni', 'fort pienc',
+    'poble sec', 'poblesec', 'parc de montjuïc', 'montjuic', 'montjuïc', 'sants', 'estació de sants', 'estacion de sants', 'sants estació', 'sants estacio',
+    'les corts', 'camp nou', 'spotify camp nou', 'pedralbes',
+    'sarrià', 'sarria', 'sant gervasi', 'galvany', 'la bonanova', 'bonanova', 'tibidabo', 'vallvidrera',
+    'vila de gràcia', 'gràcia', 'gracia', 'park güell', 'park guell',
+    'horta', 'guinardó', 'guinardo', 'el carmel', 'teixonera',
+    'nou barris', 'canyelles', 'roquetes',
+    'sant andreu', 'la sagrera', 'bon pastor',
+    'sant martí', 'sant marti', 'poblenou', 'diagonal mar', 'vila olímpica', 'vila olimpica', 'port olímpic', 'port olimpic', 'fòrum', 'forum',
+    'port vell', 'w hotel barcelona', 'hotel arts'
+  ];
+
+  for (const lm of barcelonaCityLandmarks) {
+    if (raw.includes(lm)) {
+      return 'RED_ZONE';
+    }
+  }
+
+  // Explicit city name "Barcelona"
+  if (/\bbarcelona\b/i.test(raw)) {
+    return 'RED_ZONE';
+  }
+
+  // Coordinates fallback if provided
+  if (coords && typeof coords.lat === 'number' && typeof coords.lng === 'number') {
+    if (coords.lat >= 41.340 && coords.lat <= 41.455 && coords.lng >= 2.100 && coords.lng <= 2.225) {
+      return 'RED_ZONE';
+    } else {
+      return 'OUTSIDE_ZONE';
+    }
+  }
+
+  return 'AMBIGUOUS';
+}
 
 export const SEED_VEHICLES: VehicleDefinition[] = [
   {

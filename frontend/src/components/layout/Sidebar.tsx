@@ -10,6 +10,7 @@ import {
   Compass,
   DollarSign,
   Sliders,
+  Star,
   Bell,
   Smartphone,
   LogOut,
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { label: 'Drivers Fleet', href: '/admin/drivers', icon: Car },
   { label: 'Financial Analytics', href: '/admin/financials', icon: DollarSign },
   { label: 'Deposit & Pricing', href: '/admin/settings', icon: Sliders },
+  { label: 'Customer Reviews', href: '/admin/reviews', icon: Star },
   { label: 'Push Notifications', href: '/admin/notifications', icon: Bell },
   { label: 'Driver Portal', href: '/driver', icon: Smartphone, external: false },
 ];

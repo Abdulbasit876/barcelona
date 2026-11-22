@@ -265,7 +265,9 @@ CREATE POLICY "Public can view reviews" ON public.reviews FOR SELECT USING (is_p
 DROP POLICY IF EXISTS "Public can submit reviews" ON public.reviews;
 CREATE POLICY "Public can submit reviews" ON public.reviews FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Service role full access on reviews" ON public.reviews;
-CREATE POLICY "Service role full access on reviews" ON public.reviews FOR ALL USING (true);
+CREATE POLICY "Service role full access on reviews" ON public.reviews FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated admins full access on reviews" ON public.reviews;
+CREATE POLICY "Authenticated admins full access on reviews" ON public.reviews FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Bookings Policies
 DROP POLICY IF EXISTS "Public can create bookings" ON public.bookings;

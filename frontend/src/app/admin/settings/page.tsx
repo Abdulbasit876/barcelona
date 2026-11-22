@@ -51,20 +51,51 @@ export default function SettingsPage() {
   const [depositForm, setDepositForm] = useState({
     deposit_percentage: 20,
     allow_cash_balance: true,
+    allow_full_online_payment: true,
     minimum_deposit_eur: 10,
     category_auto_assignments: {} as Record<string, AutoAssignmentRule>,
   });
 
   const [pricingForm, setPricingForm] = useState({
+    // Airport Transfers
+    airport_metropolitan_km_rate: 3.0,
+    airport_outside_km_rate: 2.5,
+    airport_minimum_fare: 35.0,
+    free_waiting_mins_airport: 60,
+
+    // City Transfers
     city_base_fare: 25.0,
     city_base_threshold_km: 2.5,
     city_per_km_rate: 3.0,
+    free_waiting_mins_standard: 15,
+
+    // Cruise Port Transfers
+    cruise_port_sedan_base: 42.0,
+    cruise_port_van_fixed: 70.0,
+    free_waiting_mins_port: 30,
+
+    // Sants Train Station Transfers
+    sants_station_sedan_base: 32.0,
+    sants_station_van_fixed: 45.0,
+    free_waiting_mins_sants: 15,
+
+    // City Tour & Hourly Chauffeur
+    city_tour_hourly_rate: 65.0,
+    company_trip_hourly_rate: 65.0,
+    city_tour_min_hours: 2,
+    free_waiting_mins_tour: 15,
+
+    // Vehicle Category Surcharges
+    surcharge_economy: 0.0,
+    surcharge_standard: 5.0,
+    surcharge_premium: 10.0,
+    surcharge_standard_van: 15.0,
+    surcharge_premium_van: 22.5,
+    surcharge_electric: 12.0,
+
+    // Child Safety Seats
     baby_seat_price: 9.0,
     baby_booster_price: 4.5,
-    airport_metropolitan_km_rate: 3.0,
-    company_trip_hourly_rate: 65.0,
-    free_waiting_mins_standard: 15,
-    free_waiting_mins_airport: 60,
   });
 
   const [dispatchForm, setDispatchForm] = useState({
@@ -335,6 +366,22 @@ export default function SettingsPage() {
                 <p className="text-[11px] text-slate-500 font-medium">
                   If disabled, customers must pay 100% online.
                 </p>
+                <label className="flex items-center gap-3 cursor-pointer mt-2">
+                  <input
+                    type="checkbox"
+                    checked={depositForm.allow_full_online_payment !== false}
+                    onChange={(e) =>
+                      setDepositForm({ ...depositForm, allow_full_online_payment: e.target.checked })
+                    }
+                    className="w-4 h-4 accent-navy-800"
+                  />
+                  <span className="text-xs font-bold text-slate-800">
+                    Enable Full 100% Online Payment Option at Checkout
+                  </span>
+                </label>
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Allows customers to pay in full online if preferred.
+                </p>
               </div>
             </div>
 
@@ -538,70 +585,197 @@ export default function SettingsPage() {
           </div>
 
           <div className="p-5">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {[
-                {
-                  label: 'City Base Fare (€)',
-                  key: 'city_base_fare',
-                  note: 'Minimum fare for inside-city transfers ≤2.5km',
-                },
-                {
-                  label: 'City Base Distance Threshold (km)',
-                  key: 'city_base_threshold_km',
-                  note: 'Distance included in base fare',
-                },
-                {
-                  label: 'City Per-Kilometer Rate (€/km)',
-                  key: 'city_per_km_rate',
-                  note: 'Applied to km beyond base threshold',
-                },
-                {
-                  label: 'Airport Metropolitan Rate (€/km)',
-                  key: 'airport_metropolitan_km_rate',
-                  note: 'Outside Barcelona city ring per km rate',
-                },
-                {
-                  label: 'Hourly Chauffeur Service Rate (€/h)',
-                  key: 'company_trip_hourly_rate',
-                  note: 'City tour & hourly chauffeur base rate',
-                },
-                {
-                  label: 'Baby Car Seat Price (€)',
-                  key: 'baby_seat_price',
-                  note: 'Extra fee per infant/toddler seat',
-                },
-                {
-                  label: 'Child Booster Cushion (€)',
-                  key: 'baby_booster_price',
-                  note: 'Extra fee per booster cushion',
-                },
-                {
-                  label: 'Standard Free Waiting Time (mins)',
-                  key: 'free_waiting_mins_standard',
-                  note: 'Complementary wait for city & port pickups',
-                },
-                {
-                  label: 'Airport Free Waiting Time (mins)',
-                  key: 'free_waiting_mins_airport',
-                  note: 'Included waiting time after flight touchdown',
-                },
-              ].map((field) => (
-                <div key={field.key}>
-                  <label className="text-xs font-bold text-slate-700 block mb-1.5">
-                    {field.label}
-                  </label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={(pricingForm as any)[field.key]}
-                    onChange={(e) =>
-                      setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })
-                    }
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800"
-                  />
-                  <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+            {/* Airport Transfer Rules Reference Card */}
+            <div className="mb-5 p-4 rounded-xl bg-slate-50 border border-slate-200/90 text-xs text-slate-800 space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 font-extrabold text-slate-900 border-b border-slate-200/70 pb-2">
+                <span className="flex items-center gap-1.5">
+                  📍 Airport Transfer Zone Pricing (AMB Barcelona Zone Map Reference)
+                </span>
+                <span className="self-start sm:self-auto bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                  Automated Flight Tracking: Enabled
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 text-[11px]">
+                <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <div className="text-[10px] font-bold text-red-600 uppercase">Barcelona City (Red Zone)</div>
+                  <div className="text-base font-extrabold text-slate-900">€{pricingForm.airport_metropolitan_km_rate || 3.0}/km</div>
+                  <div className="text-[10px] text-slate-400">Within Barcelona city limits</div>
                 </div>
-              ))}
+                <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <div className="text-[10px] font-bold text-amber-600 uppercase">Outside Barcelona (Yellow & Green)</div>
+                  <div className="text-base font-extrabold text-slate-900">€{pricingForm.airport_outside_km_rate || 2.5}/km</div>
+                  <div className="text-[10px] text-slate-400">Barcelona ⇄ Outside or Outside ⇄ Outside</div>
+                </div>
+                <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <div className="text-[10px] font-bold text-slate-500 uppercase">Minimum Fare Threshold</div>
+                  <div className="text-base font-extrabold text-slate-900">€{pricingForm.airport_minimum_fare || 35.0}</div>
+                  <div className="text-[10px] text-slate-400">Guaranteed minimum fare</div>
+                </div>
+                <div className="bg-white p-2.5 rounded-lg border border-slate-200">
+                  <div className="text-[10px] font-bold text-slate-500 uppercase">Complimentary Waiting Time</div>
+                  <div className="text-base font-extrabold text-slate-900">{pricingForm.free_waiting_mins_airport || 60} mins</div>
+                  <div className="text-[10px] text-slate-400">Included after flight touchdown</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section A: Airport Transfers */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">✈️ Airport Transfers</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'Metropolitan Area – Barcelona Red Zone (€/km)', key: 'airport_metropolitan_km_rate', note: 'Rate for rides within Barcelona city Red Zone' },
+                  { label: 'Outside Metropolitan – Yellow & Light Green (€/km)', key: 'airport_outside_km_rate', note: 'Rate between Barcelona and outside zones (both directions)' },
+                  { label: 'Airport Minimum Fare (€)', key: 'airport_minimum_fare', note: 'Guaranteed minimum fare for airport transfers' },
+                  { label: 'Free Waiting Time – Airport (mins)', key: 'free_waiting_mins_airport', note: 'Included waiting time after flight touchdown' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section B: City Point-to-Point Transfers */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">🏙️ City Point-to-Point Transfers</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'City Base Fare (€)', key: 'city_base_fare', note: 'Minimum fare for city transfers up to base threshold' },
+                  { label: 'City Base Distance Threshold (km)', key: 'city_base_threshold_km', note: 'Distance included in the base fare' },
+                  { label: 'City Per-Kilometer Rate (€/km)', key: 'city_per_km_rate', note: 'Applied to km beyond the base threshold' },
+                  { label: 'Free Waiting Time – City (mins)', key: 'free_waiting_mins_standard', note: 'Complimentary waiting time at pickup' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section C: Cruise Port Transfers */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">🚢 Cruise Port Transfers</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'Sedan Fixed Fare (€)', key: 'cruise_port_sedan_base', note: 'Fixed fare for sedan vehicles to/from cruise port' },
+                  { label: 'Van Fixed Fare (€)', key: 'cruise_port_van_fixed', note: 'Fixed fare for van vehicles to/from cruise port' },
+                  { label: 'Free Waiting Time – Port (mins)', key: 'free_waiting_mins_port', note: 'Complimentary waiting time at port pickup' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section D: Sants Train Station Transfers */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">🚂 Sants Train Station Transfers</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'Sedan Fixed Fare (€)', key: 'sants_station_sedan_base', note: 'Fixed fare for sedan vehicles to/from Sants Station' },
+                  { label: 'Van Fixed Fare (€)', key: 'sants_station_van_fixed', note: 'Fixed fare for van vehicles to/from Sants Station' },
+                  { label: 'Free Waiting Time – Sants (mins)', key: 'free_waiting_mins_sants', note: 'Complimentary waiting time at Sants Station' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section E: Sightseeing Tours & Hourly Chauffeur */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">🗺️ Sightseeing Tours & Hourly Chauffeur</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'City Tour Hourly Rate (€/h)', key: 'city_tour_hourly_rate', note: 'Hourly rate for sightseeing / city tour service' },
+                  { label: 'Corporate Chauffeur Rate (€/h)', key: 'company_trip_hourly_rate', note: 'Hourly rate for corporate / business chauffeur' },
+                  { label: 'Minimum Tour Hours', key: 'city_tour_min_hours', note: 'Minimum booking duration for tour service' },
+                  { label: 'Free Waiting Time – Tour (mins)', key: 'free_waiting_mins_tour', note: 'Complimentary waiting time for tour bookings' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section F: Vehicle Category Surcharges */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">🚗 Vehicle Category Surcharges</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'Economy Surcharge (€)', key: 'surcharge_economy', note: 'Extra fee for Economy transfers' },
+                  { label: 'Standard Sedan Surcharge (€)', key: 'surcharge_standard', note: 'Extra fee for Standard Sedan transfers' },
+                  { label: 'Premium Executive Surcharge (€)', key: 'surcharge_premium', note: 'Extra fee for Premium Executive transfers' },
+                  { label: 'Standard Van Surcharge (€)', key: 'surcharge_standard_van', note: 'Extra fee for Standard Van transfers' },
+                  { label: 'Premium / Group Van Surcharge (€)', key: 'surcharge_premium_van', note: 'Extra fee for Premium or Group Van transfers' },
+                  { label: 'Electric / Green Surcharge (€)', key: 'surcharge_electric', note: 'Extra fee for Electric / Green transfers' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section G: Child Safety Seats & Extras */}
+            <div className="mb-2">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
+                <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wide">👶 Child Safety Seats & Extras</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { label: 'Baby Car Seat Price (€)', key: 'baby_seat_price', note: 'Extra fee per infant / toddler car seat' },
+                  { label: 'Child Booster Cushion (€)', key: 'baby_booster_price', note: 'Extra fee per child booster cushion' },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label className="text-xs font-bold text-slate-700 block mb-1.5">{field.label}</label>
+                    <input type="number" step="0.5" value={(pricingForm as any)[field.key]}
+                      onChange={(e) => setPricingForm({ ...pricingForm, [field.key]: Number(e.target.value) })}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-navy-800" />
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">{field.note}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
