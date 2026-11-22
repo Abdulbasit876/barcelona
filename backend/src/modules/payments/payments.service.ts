@@ -21,15 +21,33 @@ export class PaymentsService {
     private readonly bookingsService: BookingsService,
     private readonly supabase: SupabaseService,
   ) {
-    const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
+    const secretKey =
+      this.configService.get<string>('STRIPE_SECRET_KEY') ||
+      process.env.STRIPE_SECRET_KEY;
     if (secretKey && !secretKey.includes('placeholder')) {
-      this.stripe = new Stripe(secretKey, {
+      const cleanKey = secretKey.replace(/['"]+/g, '').trim();
+      this.stripe = new Stripe(cleanKey, {
         apiVersion: '2024-04-10' as any,
       });
       this.logger.log('Stripe client initialized with valid API secret key.');
     } else {
       this.logger.warn('Stripe secret key missing or placeholder.');
     }
+  }
+
+  private getStripeClient(): Stripe {
+    if (this.stripe) return this.stripe;
+    const secretKey =
+      this.configService.get<string>('STRIPE_SECRET_KEY') ||
+      process.env.STRIPE_SECRET_KEY;
+    if (secretKey && !secretKey.includes('placeholder')) {
+      const cleanKey = secretKey.replace(/['"]+/g, '').trim();
+      this.stripe = new Stripe(cleanKey, {
+        apiVersion: '2024-04-10' as any,
+      });
+      return this.stripe;
+    }
+    throw new BadRequestException('Stripe payment processing is not configured on the server.');
   }
 
   /**
@@ -46,9 +64,7 @@ export class PaymentsService {
       throw new BadRequestException('Booking reference is required.');
     }
 
-    if (!this.stripe) {
-      throw new BadRequestException('Stripe payment processing is not configured on the server.');
-    }
+    const stripe = this.getStripeClient();
 
     // 1. Fetch booking from Supabase
     const { data: booking, error: bErr } = await this.supabase
@@ -98,14 +114,14 @@ export class PaymentsService {
     let paymentIntent: Stripe.PaymentIntent | null = null;
     if (booking.stripe_payment_intent_id) {
       try {
-        const existing = await this.stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
+        const existing = await stripe.paymentIntents.retrieve(booking.stripe_payment_intent_id);
         if (
           existing.status === 'requires_payment_method' ||
           existing.status === 'requires_confirmation' ||
           existing.status === 'requires_action'
         ) {
           if (existing.amount !== amountCents) {
-            paymentIntent = await this.stripe.paymentIntents.update(existing.id, {
+            paymentIntent = await stripe.paymentIntents.update(existing.id, {
               amount: amountCents,
             });
           } else {
@@ -121,7 +137,7 @@ export class PaymentsService {
     if (!paymentIntent) {
       const idempotencyKey = `pi_create_${booking.id}_${amountCents}_${Date.now()}`;
       try {
-        paymentIntent = await this.stripe.paymentIntents.create(
+        paymentIntent = await stripe.paymentIntents.create(
           {
             amount: amountCents,
             currency: 'eur',
@@ -171,11 +187,11 @@ export class PaymentsService {
    * Handle verified Stripe webhooks with cryptographic signature verification and event deduplication
    */
   public async handleStripeWebhook(signature: string, rawBody: Buffer) {
-    const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
+    const webhookSecret =
+      this.configService.get<string>('STRIPE_WEBHOOK_SECRET') ||
+      process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!this.stripe) {
-      throw new BadRequestException('Stripe service is not configured');
-    }
+    const stripe = this.getStripeClient();
 
     if (!webhookSecret) {
       throw new BadRequestException('Stripe webhook secret is not configured');
@@ -183,7 +199,7 @@ export class PaymentsService {
 
     let event: Stripe.Event;
     try {
-      event = this.stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
+      event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret.trim());
     } catch (err: any) {
       this.logger.error(`Webhook signature verification failed: ${err.message}`);
       throw new BadRequestException(`Webhook Error: ${err.message}`);

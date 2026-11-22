@@ -361,9 +361,8 @@ export default function BookTransferPage({
         }
       }
 
-      // 2. Request Stripe PaymentIntent from NestJS backend
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001/api/v1';
-      const piRes = await fetch(`${apiBase}/payments/create-intent`, {
+      // 2. Request Stripe PaymentIntent from unified payment endpoint
+      const piRes = await fetch('/api/payments/create-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
