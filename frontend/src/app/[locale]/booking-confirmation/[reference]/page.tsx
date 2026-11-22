@@ -38,12 +38,13 @@ export default function BookingConfirmationPage({
   const token = searchParams.get('token') || '';
   const emailParam = searchParams.get('email') || '';
   const isMockPayment = searchParams.get('mock_payment') === 'true';
-  const paymentSuccess = searchParams.get('payment_success') === 'true';
+  const redirectStatus = searchParams.get('redirect_status');
+  const paymentSuccess = searchParams.get('payment_success') === 'true' || redirectStatus === 'succeeded';
 
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [paying, setPaying] = useState(false);
-  const [isPaid, setIsPaid] = useState(paymentSuccess || isMockPayment);
+  const [isPaid, setIsPaid] = useState(paymentSuccess);
   const [copied, setCopied] = useState(false);
 
   // Card modal & info state
@@ -69,6 +70,19 @@ export default function BookingConfirmationPage({
   };
 
   const fetchBooking = async () => {
+    // 1. Authoritative check: Check live payment status endpoint
+    try {
+      const payRes = await fetch(`/api/payments/status/${encodeURIComponent(reference)}`);
+      if (payRes.ok) {
+        const payData = await payRes.json();
+        if (payData.paymentStatus === 'PAID' || payData.depositPaid === true) {
+          setIsPaid(true);
+        }
+      }
+    } catch (e) {
+      // Continue to next checks
+    }
+
     try {
       const tokenQuery = token ? `&token=${encodeURIComponent(token.trim())}` : '';
       const emailQuery = emailParam ? `&contact=${encodeURIComponent(emailParam.trim())}` : '';
@@ -77,7 +91,7 @@ export default function BookingConfirmationPage({
         const data = await res.json();
         const norm = normalizeBookingData(data);
         setBooking(norm);
-        if (norm.paymentStatus === 'PAID' || norm.balancePaid) {
+        if (norm.paymentStatus === 'PAID' || norm.balancePaid || norm.depositPaid || data.payment_status === 'PAID' || data.paymentStatus === 'PAID' || data.deposit_paid === true) {
           setIsPaid(true);
         }
         setLoading(false);

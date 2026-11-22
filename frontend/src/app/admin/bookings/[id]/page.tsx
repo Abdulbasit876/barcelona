@@ -209,8 +209,23 @@ export default function BookingDetailPage() {
             <div className="text-xl font-black text-slate-900">
               €{Number(booking.total_fare || 0).toFixed(2)}
             </div>
-            <div className="text-[11px] text-slate-500 mt-0.5 font-medium">
-              Payment: {booking.payment_status}
+            <div className="text-[11px] text-slate-500 mt-0.5 font-medium flex items-center gap-1.5">
+              <span>Payment:</span>
+              <span
+                className={`font-bold px-1.5 py-0.5 rounded text-[10px] ${
+                  booking.payment_status === 'PAID'
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : booking.payment_status === 'FAILED'
+                    ? 'bg-rose-100 text-rose-800'
+                    : booking.payment_status === 'PROCESSING'
+                    ? 'bg-sky-100 text-sky-800'
+                    : booking.payment_status === 'REFUNDED'
+                    ? 'bg-purple-100 text-purple-800'
+                    : 'bg-amber-100 text-amber-800'
+                }`}
+              >
+                {booking.payment_status || 'PENDING'}
+              </span>
             </div>
           </div>
 
@@ -221,8 +236,16 @@ export default function BookingDetailPage() {
             <div className="text-xl font-black text-emerald-800">
               €{Number(booking.deposit_amount || 0).toFixed(2)}
             </div>
-            <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">
-              {booking.deposit_paid ? '✓ Deposit Collected' : '⏳ Deposit Awaiting'}
+            <div className="text-[11px] font-semibold mt-0.5">
+              {booking.deposit_paid && (booking.payment_status === 'PAID' || booking.payment_status === 'DEPOSIT_PAID') ? (
+                <span className="text-emerald-700 font-bold">✓ Deposit Collected</span>
+              ) : booking.payment_status === 'FAILED' ? (
+                <span className="text-rose-700 font-bold">✗ Payment Failed</span>
+              ) : booking.payment_status === 'PROCESSING' ? (
+                <span className="text-sky-700 font-bold">⏳ Processing Payment</span>
+              ) : (
+                <span className="text-amber-700">⏳ Deposit Awaiting</span>
+              )}
             </div>
           </div>
 
@@ -536,6 +559,78 @@ export default function BookingDetailPage() {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* Stripe Payment Details Card */}
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 space-y-3 shadow-sm">
+              <div className="text-xs font-bold text-slate-900 uppercase tracking-wider pb-3 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                  Stripe Payment Details
+                </div>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    booking.payment_status === 'PAID'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : booking.payment_status === 'FAILED'
+                      ? 'bg-rose-100 text-rose-800'
+                      : booking.payment_status === 'PROCESSING'
+                      ? 'bg-sky-100 text-sky-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}
+                >
+                  {booking.payment_status || 'PENDING'}
+                </span>
+              </div>
+
+              <div className="space-y-2.5 text-xs">
+                <div className="flex justify-between items-center py-1 border-b border-slate-50">
+                  <span className="text-slate-500">Total Authorized Fare:</span>
+                  <span className="font-bold text-slate-900">€{Number(booking.total_fare || 0).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-slate-50">
+                  <span className="text-slate-500">Amount Paid Online:</span>
+                  <span className="font-bold text-emerald-700">
+                    €{Number(booking.deposit_paid ? (booking.deposit_amount || booking.total_fare) : 0).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-1 border-b border-slate-50">
+                  <span className="text-slate-500">Remaining Balance:</span>
+                  <span className="font-bold text-slate-900">€{Number(booking.remaining_balance || 0).toFixed(2)}</span>
+                </div>
+
+                {booking.stripe_payment_intent_id && (
+                  <div className="py-1 border-b border-slate-50">
+                    <div className="text-[10px] text-slate-400 uppercase font-bold">Stripe Transaction / PaymentIntent</div>
+                    <div className="font-mono text-[11px] text-sky-900 select-all font-semibold break-all">
+                      {booking.stripe_payment_intent_id}
+                    </div>
+                  </div>
+                )}
+
+                {booking.fare_breakdown?.paid_at && (
+                  <div className="flex justify-between items-center py-1 border-b border-slate-50">
+                    <span className="text-slate-500">Payment Date:</span>
+                    <span className="font-medium text-slate-800">
+                      {new Date(booking.fare_breakdown.paid_at).toLocaleString('en-GB')}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500">Payment Method:</span>
+                  <span className="font-medium text-slate-800 capitalize">
+                    {booking.fare_breakdown?.payment_method_type || 'Credit / Debit Card (Stripe)'}
+                  </span>
+                </div>
+
+                {booking.fare_breakdown?.payment_error && (
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-[11px] mt-2">
+                    <div className="font-bold">Failure Reason:</div>
+                    <div>{booking.fare_breakdown.payment_error}</div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
