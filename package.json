@@ -13,7 +13,8 @@
     "build:backend": "npm run build --workspace=@barcelona/backend",
     "start:frontend": "npm run start --workspace=@barcelona/frontend",
     "start:backend": "npm run start --workspace=@barcelona/backend",
-    "test:backend": "npm run test --workspace=@barcelona/backend"
+    "test:backend": "npm run test --workspace=@barcelona/backend",
+    "test:stripe": "node scripts/test-stripe-integration.js"
   },
   "devDependencies": {
     "typescript": "^5.4.5"

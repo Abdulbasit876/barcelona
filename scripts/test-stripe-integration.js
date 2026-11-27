@@ -1,3 +1,7 @@
+/**
+ * Barcelona Taxi Transfer - Complete Stripe Payment Integration Test Suite
+ * Validated against Stripe Test Mode & Supabase
+ */
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: './backend/.env' });
